@@ -23,6 +23,7 @@ dependencies {
 
     shadowImplementation(deps.joml) { isTransitive = false }
     shadowDowngrade(deps.evalEx) { isTransitive = false }
+    shadowDowngrade(deps.dataFixerUpper) { isTransitive = false }
 
     // lombok for evalex
     compileOnly(deps.lombok)
@@ -33,7 +34,6 @@ dependencies {
     // Dev-only compile/runtime mods
     compileOnlyApi(deps.jspecify)
     compileOnlyApi(deps.annotations)
-    testImplementation(deps.assertj.core)
 
     compileOnlyApi(deps.bogoSorter.deobf())
     if (providers.gradleProperty("debug_bogo").map { it.toBoolean() }.getOrElse(false)) {
@@ -48,8 +48,7 @@ dependencies {
         runtimeOnly(deps.nea.deobf())
     }
 
-    compileOnlyApi(deps.jei) // JEI
-    runtimeOnly(deps.hei) // HEI
+    implementation(deps.hei) // HEI
 
     runtimeOnly(deps.theOneProbe) // TOP
 }
