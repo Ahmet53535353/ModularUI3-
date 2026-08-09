@@ -63,7 +63,7 @@ tasks.test {
     testClassesDirs = layout.files(dgTest.outputs)
 
     classpath = classpath
-        .plus(layout.files(dgTest.outputs, dgMain.outputs, dgApi.outputs))
+        .plus(layout.files(dgTest.outputs, dgMain.outputs, dgApi.outputs, shadowDowngrade))
         .minus(layout.files(sourceSets.main.classesDirs, sourceSets.test.classesDirs, sourceSets.api.classesDirs))
 }
 

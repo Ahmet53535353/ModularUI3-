@@ -49,7 +49,7 @@ public class Bootstrap {
         }
         net.minecraft.init.Bootstrap.register();
         ModMetadata meta = new ModMetadata();
-        meta.modId = MuiTags.MODID;
+        meta.modId = Tags.MOD_ID;
         Loader.instance().setupTestHarness(new DummyModContainer(meta));
 
         bootstrapped = true;

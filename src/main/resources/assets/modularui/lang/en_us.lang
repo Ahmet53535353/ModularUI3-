@@ -13,3 +13,20 @@ modularui.item.phantom.control=§7Scroll wheel up increases amount, down decreas
 modularui.fluid.click_to_fill=§bLeft §7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 modularui.fluid.click_combined=§cRight §7or §bLeft §7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
 modularui.fluid.click_to_empty=§cRight §7Click with a Fluid Container to §cempty §7the tank (Shift-click for a full stack).
+
+# Debug Screen
+modularui.debug.mouse_pos=§7Mouse Pos: §3%d§7, §3%d
+modularui.debug.fps=§7FPS: §3%d
+modularui.debug.theme_id=§7Theme ID: §6%s
+modularui.debug.widget_theme=§7Widget Theme: §6%s
+modularui.debug.size=§7Size: §3%d§7, §3%d
+modularui.debug.pos_rel=§7Pos: §3%d§7, §3%d§7  Rel: §3%d§7, §3%d
+modularui.debug.widget=§7Widget: §6%s
+modularui.debug.parent_size=§7Parent size: §3%d§7, §3%d
+modularui.debug.parent_pos_rel=§7Parent pos: §3%d§7, §3%d§7  Rel: §3%d§7, §3%d
+modularui.debug.parent=§7Parent: §6%s
+modularui.debug.slot_index=§7Slot Index: §3%d
+modularui.debug.slot_number=§7Slot Number: §3%d
+modularui.debug.shift_click_priority=§7Shift-Click Priority: §3%s
+modularui.debug.disabled=§cDISABLED
+modularui.debug.hovered=§7Hovered: §6%s

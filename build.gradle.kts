@@ -1,3 +1,5 @@
+@file:Suppress("AvoidDuplicateDependencies")
+
 plugins {
     alias(conventions.plugins.repositories)
     alias(conventions.plugins.minecraft)
@@ -7,31 +9,6 @@ plugins {
     alias(conventions.plugins.idea)
     alias(conventions.plugins.test)
     alias(conventions.plugins.jvm)
-}
-
-// joml is compiled into the mod jar (and its sources into the sources jar), since ModularUI ships
-// the library rather than depending on another mod to provide it.
-val embed2 = configurations.create("embed2")
-val embedSources = configurations.create("embedSources")
-configurations.implementation {
-    extendsFrom(embed2)
-}
-
-tasks.jar {
-    from(provider {
-        embed2.files.map { if (it.isDirectory) it else zipTree(it) }
-    }) {
-        exclude("META-INF", "META-INF/**", "about*.html")
-        exclude("module-info.class")
-    }
-}
-
-tasks.named<Jar>("sourcesJar") {
-    from(provider {
-        embedSources.files.map { if (it.isDirectory) it else zipTree(it) }
-    })
-    exclude("module-info.class")
-    exclude("module-info.java")
 }
 
 dependencies {
@@ -44,9 +21,8 @@ dependencies {
     // So we use Mixinbooter 10.x here, which contains the mixin annotation processor.
     annotationProcessor(libs.mixinbooter)
 
-    // joml, embedded into the jar and sources jar
-    embed2(deps.joml) { isTransitive = false }
-    embedSources(variantOf(deps.joml) { classifier("sources") }) { isTransitive = false }
+    shadowImplementation(deps.joml) { isTransitive = false }
+    shadowDowngrade(deps.evalEx) { isTransitive = false }
 
     // lombok for evalex
     compileOnly(deps.lombok)
@@ -59,9 +35,9 @@ dependencies {
     compileOnlyApi(deps.annotations)
     testImplementation(deps.assertj.core)
 
-    compileOnlyApi(deps.bogo.sorter.deobf())
+    compileOnlyApi(deps.bogoSorter.deobf())
     if (providers.gradleProperty("debug_bogo").map { it.toBoolean() }.getOrElse(false)) {
-        runtimeOnly(deps.bogo.sorter.deobf())
+        runtimeOnly(deps.bogoSorter.deobf())
         runtimeOnly(deps.key.binding.patch.deobf())
     }
 

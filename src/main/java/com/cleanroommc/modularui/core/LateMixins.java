@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 public class LateMixins implements ILateMixinLoader {
 
-    public static final List<String> modMixins = ImmutableList.of("jei");
+    public static final List<String> modMixins = ImmutableList.of("jei", "evalex");
 
     @Override
     public List<String> getMixinConfigs() {
-        return modMixins.stream().map(mod -> "mixin.modularui." + mod + ".json").collect(Collectors.toList());
+        return modMixins.stream().map(mod -> "mixin.modularui." + mod + ".json").toList();
     }
 
     @Override
@@ -25,6 +25,6 @@ public class LateMixins implements ILateMixinLoader {
     }
 
     public boolean shouldEnableModMixin(String mod) {
-        return Loader.isModLoaded(mod);
+        return mod.equals("evalex") || Loader.isModLoaded(mod);
     }
 }
