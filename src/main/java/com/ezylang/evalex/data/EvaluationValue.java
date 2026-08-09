@@ -369,11 +369,14 @@ public class EvaluationValue implements Comparable<EvaluationValue> {
      * @param mathContext The math context to use for creation of the {@link BigDecimal} storage.
      */
     public static EvaluationValue numberOfString(String value, MathContext mathContext) {
-        if (value.startsWith("0x") || value.startsWith("0X")) {
-            BigInteger hexToInteger = new BigInteger(value.substring(2), 16);
-            return EvaluationValue.numberValue(new BigDecimal(hexToInteger, mathContext));
-        } else {
+        try {
+            if (value.startsWith("0x") || value.startsWith("0X")) {
+                BigInteger hexToInteger = new BigInteger(value.substring(2), 16);
+                return EvaluationValue.numberValue(new BigDecimal(hexToInteger, mathContext));
+            }
             return EvaluationValue.numberValue(new BigDecimal(value, mathContext));
+        } catch (NumberFormatException e) {
+            return EvaluationValue.numberValue(BigDecimal.ZERO);
         }
     }
 

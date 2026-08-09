@@ -14,6 +14,7 @@ import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MathUtils;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.widget.sizer.Area;
 
 import net.minecraft.client.gui.GuiScreen;
@@ -358,6 +359,7 @@ public class RichTooltip implements IRichTextBuilder<RichTooltip> {
     }
 
     public RichTooltip addFromItem(ItemStack item) {
+        if (!NetworkUtils.isClient()) return this;
         List<String> lines = MCHelper.getItemToolTip(item);
         add(lines.get(0)).newLine();
         if (lines.size() > 1) {

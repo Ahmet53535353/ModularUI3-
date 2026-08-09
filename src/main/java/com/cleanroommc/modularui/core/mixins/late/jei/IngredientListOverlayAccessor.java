@@ -2,6 +2,7 @@ package com.cleanroommc.modularui.core.mixins.late.jei;
 
 import mezz.jei.gui.ghost.GhostIngredientDragManager;
 import mezz.jei.gui.overlay.IngredientListOverlay;
+import mezz.jei.input.GuiTextFieldFilter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
@@ -10,4 +11,7 @@ public interface IngredientListOverlayAccessor {
 
     @Accessor
     GhostIngredientDragManager getGhostIngredientDragManager();
+
+    @Accessor
+    GuiTextFieldFilter getSearchField();
 }

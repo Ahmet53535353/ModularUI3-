@@ -12,6 +12,8 @@ import com.cleanroommc.modularui.utils.SIPrefix;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.sizer.Box;
 
+import lombok.Getter;
+
 import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.Nullable;
@@ -21,10 +23,10 @@ public abstract class AbstractFluidDisplayWidget<W extends AbstractFluidDisplayW
     public static final String UNIT_BUCKET = "B";
     public static final String UNIT_LITER = "L";
 
-    private final Box contentPadding = new Box().all(1);
+    @Getter private final Box contentPadding = new Box().all(1);
     private String unit = UNIT_BUCKET;
-    private SIPrefix baseUnitPrefix = SIPrefix.Milli;
-    private boolean flipLighterThanAir = true;
+    @Getter private SIPrefix baseUnitPrefix = SIPrefix.Milli;
+    @Getter private boolean flipLighterThanAir = true;
 
     protected AbstractFluidDisplayWidget() {
         size(18);
@@ -38,13 +40,13 @@ public abstract class AbstractFluidDisplayWidget<W extends AbstractFluidDisplayW
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         FluidStack fluid = getFluidStack();
-        if (fluid == null) return;
+        if (fluid == null || fluid.amount <= 0) return;
         int x = this.contentPadding.getLeft();
         int y = this.contentPadding.getTop();
         int w = getArea().width - this.contentPadding.horizontal();
         int h = getArea().height - this.contentPadding.vertical();
         float c = getCapacity();
-        if (c > 0 && fluid.amount > 0) {
+        if (c > 0) {
             int newH = (int) MathUtils.rescaleLinear(fluid.amount, 0, c, 1, h);
             if (!this.flipLighterThanAir || !fluid.getFluid().isLighterThanAir()) y += h - newH;
             h = newH;
@@ -99,10 +101,6 @@ public abstract class AbstractFluidDisplayWidget<W extends AbstractFluidDisplayW
         return this.baseUnitPrefix;
     }
 
-    public boolean isFlipLighterThanAir() {
-        return flipLighterThanAir;
-    }
-
     public W contentPadding(int left, int right, int top, int bottom) {
         this.contentPadding.all(left, right, top, bottom);
         return getThis();
@@ -153,11 +151,4 @@ public abstract class AbstractFluidDisplayWidget<W extends AbstractFluidDisplayW
         return getThis();
     }
 
-    public Box getContentPadding() {
-        return contentPadding;
-    }
-
-    public SIPrefix getBaseUnitPrefix() {
-        return baseUnitPrefix;
-    }
 }

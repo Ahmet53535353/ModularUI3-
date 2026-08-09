@@ -8,6 +8,7 @@ import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.ModularContainer;
 import com.cleanroommc.modularui.test.CraftingModularContainer;
 
+import lombok.Getter;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
@@ -15,13 +16,14 @@ import mezz.jei.api.JEIPlugin;
 import mezz.jei.config.Config;
 import mezz.jei.gui.ghost.GhostIngredientDrag;
 import mezz.jei.gui.ghost.GhostIngredientDragManager;
+import mezz.jei.input.GuiTextFieldFilter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @JEIPlugin
 public class ModularUIJeiPlugin implements IModPlugin {
 
-    private static IJeiRuntime runtime;
+    @Getter private static IJeiRuntime runtime;
 
     @Override
     public void register(@NotNull IModRegistry registry) {
@@ -36,12 +38,14 @@ public class ModularUIJeiPlugin implements IModPlugin {
         ModularUIJeiPlugin.runtime = jeiRuntime;
     }
 
-    public static IJeiRuntime getRuntime() {
-        return runtime;
-    }
-
     public static GhostIngredientDragManager getGhostDragManager() {
         return ((IngredientListOverlayAccessor) runtime.getIngredientListOverlay()).getGhostIngredientDragManager();
+    }
+
+    public static boolean isSearchFocused() {
+        if (runtime == null) return false;
+        GuiTextFieldFilter searchField = ((IngredientListOverlayAccessor) runtime.getIngredientListOverlay()).getSearchField();
+        return searchField != null && searchField.isFocused();
     }
 
     public static boolean hoveringOverIngredient(RecipeViewerGhostIngredientSlot<?> ingredientSlot) {

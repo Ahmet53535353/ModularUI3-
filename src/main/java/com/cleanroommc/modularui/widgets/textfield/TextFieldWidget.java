@@ -14,6 +14,7 @@ import com.cleanroommc.modularui.utils.ParseResult;
 import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.ValueSyncHandler;
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
 /**
  * Text input widget with one line only. Can be synced between client and server. Can handle text validation.
  */
+@Getter
 public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
 
     private IStringValue<?> stringValue;
@@ -103,7 +105,7 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
 
     @Override
     public void drawForeground(ModularGuiContext context) {
-        if (hasTooltip() && (tooltipOverride || getScrollData().isScrollBarActive(getScrollArea())) && isHoveringFor(getTooltip().getShowUpTimer())) {
+        if (hasTooltip() && (tooltipOverride || getScrollData().isScrollBarActive(getScrollArea())) && isHoveringFor(getTooltip().getShowUpTimer()) && !context.hasDraggable()) {
             getTooltip().draw(getContext());
         }
     }
@@ -116,7 +118,7 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
         if (this.handler.getText().size() > 1) {
             throw new IllegalStateException("TextFieldWidget can only have one line!");
         }
-        return this.handler.getText().get(0);
+        return this.handler.getText().getFirst();
     }
 
     public void setText(@NotNull String text) {
@@ -133,7 +135,7 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
         if (this.handler.getText().isEmpty()) {
             this.handler.getText().add(this.validator.apply(""));
         } else if (this.handler.getText().size() == 1) {
-            this.handler.getText().set(0, this.validator.apply(this.handler.getText().get(0)));
+            this.handler.getText().set(0, this.validator.apply(this.handler.getText().getFirst()));
             markTooltipDirty();
         } else {
             throw new IllegalStateException("TextFieldWidget can only have one line!");
@@ -155,20 +157,8 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
         return true;
     }
 
-    public boolean isAutoUpdateOnChange() {
-        return autoUpdateOnChange;
-    }
-
     public boolean acceptsExpression() {
         return acceptsExpression;
-    }
-
-    public String getMathFailMessage() {
-        return mathFailMessage;
-    }
-
-    public IStringValue<?> getStringValue() {
-        return stringValue;
     }
 
     public TextFieldWidget acceptsExpressions(boolean acceptsExpression) {
@@ -244,15 +234,15 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
     }
 
     public TextFieldWidget setNumbers(Supplier<Integer> min, Supplier<Integer> max) {
-        return setNumbers(val -> Math.min(max.get(), Math.max(min.get(), val)));
+        return setNumbers(val -> Math.clamp(min.get(), val, max.get()));
     }
 
     public TextFieldWidget setNumbersLong(Supplier<Long> min, Supplier<Long> max) {
-        return setNumbersLong(val -> Math.min(max.get(), Math.max(min.get(), val)));
+        return setNumbersLong(val -> Math.clamp(min.get(), val, max.get()));
     }
 
     public TextFieldWidget setNumbers(int min, int max) {
-        return setNumbers(val -> Math.min(max, Math.max(min, val)));
+        return setNumbers(val -> Math.clamp(min, val, max));
     }
 
     public TextFieldWidget setNumbers() {
@@ -354,23 +344,4 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
         return super.addTooltipStringLines(lines);
     }
 
-    public Function<String, String> getValidator() {
-        return validator;
-    }
-
-    public boolean isNumbers() {
-        return numbers;
-    }
-
-    public double getDefaultNumber() {
-        return defaultNumber;
-    }
-
-    public boolean isTooltipOverride() {
-        return tooltipOverride;
-    }
-
-    public boolean isAcceptsExpression() {
-        return acceptsExpression;
-    }
 }

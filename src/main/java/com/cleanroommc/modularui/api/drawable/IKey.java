@@ -14,6 +14,7 @@ import com.cleanroommc.modularui.drawable.text.TextRenderer;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.utils.JsonHelper;
 import com.cleanroommc.modularui.widgets.TextWidget;
 
@@ -221,6 +222,7 @@ public interface IKey extends IDrawable, IJsonSerializable {
 
     @Override
     default int getDefaultWidth() {
+        if (!NetworkUtils.isClient()) return 18;
         renderer.setAlignment(Alignment.TopLeft, -1, -1);
         renderer.setScale(getScale());
         renderer.setPos(0, 0);
@@ -232,6 +234,7 @@ public interface IKey extends IDrawable, IJsonSerializable {
 
     @Override
     default int getDefaultHeight() {
+        if (!NetworkUtils.isClient()) return 18;
         renderer.setAlignment(Alignment.TopLeft, -1, -1);
         renderer.setScale(getScale());
         renderer.setPos(0, 0);

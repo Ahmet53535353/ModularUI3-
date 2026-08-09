@@ -1,5 +1,6 @@
 package com.cleanroommc.modularui.network;
 
+import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.network.packets.CloseAllGuiPacket;
 import com.cleanroommc.modularui.network.packets.CloseGuiPacket;
@@ -65,20 +66,36 @@ public class NetworkHandler {
     final static IMessageHandler<IPacket, IPacket> S2CHandler = (message, ctx) -> {
         NetHandlerPlayClient handler = ctx.getClientHandler();
         IThreadListener threadListener = FMLCommonHandler.instance().getWorldThread(handler);
+        Runnable task = () -> {
+            try {
+                message.executeClient(handler);
+            } catch (Exception e) {
+                ModularUI.LOGGER.throwing(e);
+                throw e;
+            }
+        };
         if (threadListener.isCallingFromMinecraftThread()) {
-            return message.executeClient(handler);
+            task.run();
         } else {
-            threadListener.addScheduledTask(() -> message.executeClient(handler));
+            threadListener.addScheduledTask(task);
         }
         return null;
     };
     final static IMessageHandler<IPacket, IPacket> C2SHandler = (message, ctx) -> {
         NetHandlerPlayServer handler = ctx.getServerHandler();
         IThreadListener threadListener = FMLCommonHandler.instance().getWorldThread(handler);
+        Runnable task = () -> {
+            try {
+                message.executeServer(handler);
+            } catch (Exception e) {
+                ModularUI.LOGGER.throwing(e);
+                throw e;
+            }
+        };
         if (threadListener.isCallingFromMinecraftThread()) {
-            return message.executeServer(handler);
+            task.run();
         } else {
-            threadListener.addScheduledTask(() -> message.executeServer(handler));
+            threadListener.addScheduledTask(task);
         }
         return null;
     };

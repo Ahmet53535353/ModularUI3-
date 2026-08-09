@@ -1,8 +1,10 @@
 package com.cleanroommc.modularui.widgets.slot;
 
 import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.ModularUIConfig;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.value.ISyncOrValue;
 import com.cleanroommc.modularui.api.widget.IVanillaSlot;
 import com.cleanroommc.modularui.api.widget.Interactable;
@@ -112,7 +114,7 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
     @Override
     public void drawForeground(ModularGuiContext context) {
         RichTooltip tooltip = getTooltip();
-        if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
+        if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer()) && !context.hasDraggable()) {
             tooltip.draw(getContext(), getSlot().getStack());
         }
     }
@@ -137,6 +139,14 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
     public int getSlotHoverColor() {
         WidgetThemeEntry<SlotTheme> theme = getWidgetTheme(getPanel().getTheme(), SlotTheme.class);
         return theme.getTheme().getSlotHoverColor();
+    }
+
+    @Override
+    public @Nullable IDrawable getCurrentBackground(WidgetThemeEntry<?> widgetTheme) {
+        if (isSynced() && !getSlot().getStack().isEmpty() && !ModularUIConfig.showSlotOverlay) {
+            return null;
+        }
+        return super.getCurrentBackground(widgetTheme);
     }
 
     @Override

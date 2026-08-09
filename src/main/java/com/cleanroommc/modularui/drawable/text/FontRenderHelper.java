@@ -2,6 +2,7 @@ package com.cleanroommc.modularui.drawable.text;
 
 import com.cleanroommc.modularui.api.MCHelper;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.network.NetworkUtils;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -79,6 +80,7 @@ public class FontRenderHelper {
     }
 
     public static int getDefaultTextHeight() {
+        if (!NetworkUtils.isClient()) return 9;
         FontRenderer fr = MCHelper.getFontRenderer();
         return fr != null ? fr.FONT_HEIGHT : 9;
     }

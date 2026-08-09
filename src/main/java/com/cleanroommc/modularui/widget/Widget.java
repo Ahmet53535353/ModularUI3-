@@ -23,6 +23,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.value.sync.ValueSyncHandler;
 import com.cleanroommc.modularui.widget.sizer.StandardResizer;
 
+import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +48,7 @@ import java.util.function.Predicate;
 public class Widget<W extends Widget<W>> extends AbstractWidget implements IPositioned<W>, ITooltip<W>, ISynced<W> {
 
     // other
-    private boolean excludeAreaInRecipeViewer = false;
+    @Getter private boolean excludeAreaInRecipeViewer = false;
     // sizing
     private BiConsumer<W, IViewportStack> transform;
     // syncing
@@ -55,8 +56,8 @@ public class Widget<W extends Widget<W>> extends AbstractWidget implements IPosi
     @Nullable private String syncKey;
     @Nullable private SyncHandler syncHandler;
     // rendering
-    private boolean disableThemeBackground = false;
-    private boolean disableHoverThemeBackground = false;
+    @Getter private boolean disableThemeBackground = false;
+    @Getter private boolean disableHoverThemeBackground = false;
     @Nullable private IDrawable shadow = null;
     @Nullable private IDrawable background = null;
     @Nullable private IDrawable overlay = null;
@@ -202,17 +203,9 @@ public class Widget<W extends Widget<W>> extends AbstractWidget implements IPosi
     @Override
     public void drawForeground(ModularGuiContext context) {
         RichTooltip tooltip = getTooltip();
-        if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
+        if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer()) && !context.hasDraggable()) {
             tooltip.draw(context);
         }
-    }
-
-    public boolean isDisableThemeBackground() {
-        return disableThemeBackground;
-    }
-
-    public boolean isDisableHoverThemeBackground() {
-        return disableHoverThemeBackground;
     }
 
     public @Nullable IDrawable getShadow() {
@@ -783,10 +776,6 @@ public class Widget<W extends Widget<W>> extends AbstractWidget implements IPosi
             return IDragResizeable.getDragResizeCorner(dragResizeable, getArea(), viewportStack, mouseX, mouseY);
         }
         return null;
-    }
-
-    public boolean isExcludeAreaInRecipeViewer() {
-        return this.excludeAreaInRecipeViewer;
     }
 
     public W excludeAreaInRecipeViewer() {

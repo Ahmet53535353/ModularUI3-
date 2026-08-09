@@ -8,6 +8,8 @@ import com.cleanroommc.modularui.screen.ModularContainer;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 
+import lombok.Getter;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -38,12 +40,12 @@ public class PanelSyncManager implements ISyncRegistrar<PanelSyncManager> {
     private final Map<SyncHandler, String> reverseSyncHandlers = new Reference2ObjectOpenHashMap<>();
     private final Map<String, SyncedAction> syncedActions = new Object2ReferenceOpenHashMap<>();
     private final Map<String, PanelSyncHandler> subPanels = new Object2ReferenceArrayMap<>();
-    private final ModularSyncManager modularSyncManager;
-    private String panelName;
+    @Getter private final ModularSyncManager modularSyncManager;
+    @Getter private String panelName;
     private boolean init = true;
-    private boolean locked = false;
+    @Getter private boolean locked = false;
     private boolean allowSyncHandlerRegistration = false;
-    private final boolean client;
+    @Getter private final boolean client;
 
     private final List<Consumer<EntityPlayer>> openListener = new ArrayList<>();
     private final List<Consumer<EntityPlayer>> closeListener = new ArrayList<>();
@@ -59,8 +61,8 @@ public class PanelSyncManager implements ISyncRegistrar<PanelSyncManager> {
     @ApiStatus.Internal
     public void initialize(String panelName) {
         this.panelName = panelName;
-        this.syncHandlers.forEach((mapKey, syncHandler) -> syncHandler.init(mapKey, this));
         this.locked = true;
+        this.syncHandlers.forEach((mapKey, syncHandler) -> syncHandler.init(mapKey, this));
         this.init = true;
         this.subPanels.forEach((s, syncHandler) -> this.modularSyncManager.getMainPSM().registerPanelSyncHandler(s, syncHandler));
     }
@@ -378,28 +380,12 @@ public class PanelSyncManager implements ISyncRegistrar<PanelSyncManager> {
         return getModularSyncManager().getPlayer();
     }
 
-    public ModularSyncManager getModularSyncManager() {
-        return modularSyncManager;
-    }
-
     public ISyncRegistrar<?> getHyperVisor() {
         return this.modularSyncManager.getMainPSM();
     }
 
     public ModularContainer getContainer() {
         return getModularSyncManager().getContainer();
-    }
-
-    public String getPanelName() {
-        return panelName;
-    }
-
-    public boolean isClient() {
-        return this.client;
-    }
-
-    public boolean isLocked() {
-        return locked;
     }
 
     void allowTemporarySyncHandlerRegistration(boolean allow) {

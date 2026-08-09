@@ -32,6 +32,8 @@ import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.cleanroommc.neverenoughanimations.animations.OpeningAnimation;
 
+import lombok.Getter;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -77,12 +79,12 @@ import java.util.function.Predicate;
 @SideOnly(Side.CLIENT)
 public class ClientScreenHandler {
 
-    private static final GuiContext defaultContext = new GuiContext();
+    @Getter private static final GuiContext defaultContext = new GuiContext();
 
     private static ModularScreen currentScreen = null;
     private static Character lastChar = null;
     private static final FpsCounter fpsCounter = new FpsCounter();
-    private static long ticks = 0L;
+    @Getter private static long ticks = 0L;
 
     private static IMuiScreen lastMui;
     private static final ObjectArrayList<IMuiScreen> muiStack = new ObjectArrayList<>(8);
@@ -179,10 +181,6 @@ public class ClientScreenHandler {
             GL11.glEnable(GL11.GL_STENCIL_TEST);
         }
         Stencil.reset();
-    }
-
-    public static long getTicks() {
-        return ticks;
     }
 
     public static void onFrameUpdate() {
@@ -349,7 +347,7 @@ public class ClientScreenHandler {
             ModularUIConfig.guiDebugMode = !ModularUIConfig.guiDebugMode;
             return true;
         }
-        if (keyCode == 1 || Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode)) {
+        if (keyCode == 1 || (Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode) && !isRecipeViewerSearchFocused())) {
             if (currentScreen.getContext().hasDraggable()) {
                 currentScreen.getContext().dropDraggable(true);
             } else {
@@ -358,6 +356,11 @@ public class ClientScreenHandler {
             return true;
         }
         return false;
+    }
+
+    private static boolean isRecipeViewerSearchFocused() {
+        if (!ModularUI.Mods.JEI.isLoaded()) return false;
+        return ModularUIJeiPlugin.isSearchFocused();
     }
 
     public static void dragSlot(long timeSinceLastClick) {
@@ -733,10 +736,6 @@ public class ClientScreenHandler {
             return false;
         }
         return true;
-    }
-
-    public static GuiContext getDefaultContext() {
-        return defaultContext;
     }
 
     public static GuiContext getBestContext() {
