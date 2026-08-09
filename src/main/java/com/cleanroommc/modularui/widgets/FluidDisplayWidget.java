@@ -5,6 +5,8 @@ import com.cleanroommc.modularui.api.value.IValue;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.value.ObjectValue;
 
+import lombok.Getter;
+
 import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +18,7 @@ public class FluidDisplayWidget extends AbstractFluidDisplayWidget<FluidDisplayW
 
     private IValue<FluidStack> value;
     private int capacity = 0;
-    private boolean displayAmount = true;
+    @Getter private boolean displayAmount = true;
 
     @Override
     public boolean isValidSyncOrValue(@NotNull ISyncOrValue syncOrValue) {
@@ -36,7 +38,7 @@ public class FluidDisplayWidget extends AbstractFluidDisplayWidget<FluidDisplayW
 
     @Override
     protected @Nullable FluidStack getFluidStack() {
-        return this.value != null ? this.value.getValue() : null;
+        return this.value != null ? this.value.getOrDefault(null) : null;
     }
 
     @Override
@@ -89,9 +91,5 @@ public class FluidDisplayWidget extends AbstractFluidDisplayWidget<FluidDisplayW
     @Override
     public @Nullable IValue<FluidStack> getValue() {
         return value;
-    }
-
-    public boolean isDisplayAmount() {
-        return displayAmount;
     }
 }

@@ -58,7 +58,7 @@ public abstract class AbstractFluidDisplayWidget<W extends AbstractFluidDisplayW
     public void drawOverlay(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         super.drawOverlay(context, widgetTheme);
         FluidStack fluid = getFluidStack();
-        if (fluid != null && displayAmountText()) {
+        if (fluid != null && fluid.amount > 0 && displayAmountText()) {
             String s = NumberFormat.format(getBaseUnitAmount(fluid.amount), NumberFormat.AMOUNT_TEXT) + getBaseUnit();
             // mc doesn't consider the 1px border in item slots for amount text, but it looks weird when it touches the left border, so
             // we only apply padding there

@@ -485,6 +485,30 @@ public class TestGuis extends CustomModularScreen {
                                 })));
     }
 
+    public static @NotNull ModularPanel buildTextFieldUI() {
+        return new ModularPanel("text_fields")
+                .coverChildrenHeight()
+                .width(120)
+                .padding(7)
+                .child(Flow.col()
+                        .coverChildrenHeight()
+                        .childPadding(2)
+                        .crossAxisAlignment(Alignment.CrossAxis.START)
+                        .widthRel(1f)
+                        .child(IKey.str("Any").asWidget())
+                        .child(new TextFieldWidget().widthRel(1f))
+                        .child(IKey.str("Decimal numbers (scroll)").asWidget())
+                        .child(new TextFieldWidget()
+                                .widthRel(1f)
+                                .setNumbersDouble(val -> Math.clamp(-1000.0, val, 1000.0))
+                                .usingScrollStep(true))
+                        .child(IKey.str("Whole numbers (scroll)").asWidget())
+                        .child(new TextFieldWidget()
+                                .widthRel(1f)
+                                .setNumbersLong(val -> Math.clamp(-100_000_000_000_000L, val, 100_000_000_000_000L))
+                                .usingScrollStep(true)));
+    }
+
     public static @NotNull ModularPanel buildColorTheoryUI() {
         List<Pair<Integer, Float>> colors = new ArrayList<>();
         for (ColorShade shade : ColorShade.getAll()) {

@@ -1,11 +1,13 @@
 package com.cleanroommc.modularui.widgets.textfield;
 
 import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.api.UpOrDown;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.drawable.ITextLine;
 import com.cleanroommc.modularui.api.value.IStringValue;
 import com.cleanroommc.modularui.api.value.ISyncOrValue;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.utils.MathUtils;
@@ -38,6 +40,10 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
     private boolean tooltipOverride = false;
     private boolean autoUpdateOnChange = false;
     private boolean acceptsExpression = true;
+    private double scrollStep = 1;
+    private double scrollStepCtrl = 0.1;
+    private double scrollStepShift = 100;
+    private boolean usingScrollStep = false;
 
     public double parse(String num) {
         if (!this.acceptsExpression) {
@@ -251,6 +257,58 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
 
     public TextFieldWidget setDefaultNumber(double defaultNumber) {
         this.defaultNumber = defaultNumber;
+        return this;
+    }
+
+    /**
+     * Allows for setting the numeric values with mouse scrolling.
+     * Will only allow for this behavior when number formatting is enabled, the scroll step is enabled, and the field is focused
+     */
+    @Override
+    public boolean onMouseScroll(UpOrDown scrollDirection, int amount) {
+        // default to basic behavior if scroll step isn't on, if the widget is not using numbers, and if it is focused
+        if (!this.usingScrollStep || !this.numbers || !isFocused()) return super.onMouseScroll(scrollDirection, amount);
+
+        double value;
+        if (Interactable.hasControlDown()) value = scrollDirection.modifier * scrollStepCtrl;
+        else if (Interactable.hasShiftDown()) value = scrollDirection.modifier * scrollStepShift;
+        else value = scrollDirection.modifier * scrollStep;
+
+        double number = this.parse(getText()) + value;
+        String representation = validator.apply(Double.toString(number));
+
+        this.stringValue.setStringValue(representation);
+        this.setText(representation);
+        markTooltipDirty();
+
+        return true;
+    }
+
+    /**
+     *  Sets the values by which to increment the field when the player uses the scroll wheel.
+     *  Scrolling up increases value, and scrolling down decreases value.
+     *  Also enables the usingScrollStep flag.
+     *  Default values: 1, 0.1, 100 in order.
+     * @param baseStep - By how much to change the value when no modifier key is held
+     * @param ctrlStep - By how much to change the value when the ctrl key is held
+     * @param shiftStep - By how much to change the value when the shift key is held
+     * @return this
+     */
+    public TextFieldWidget setScrollValues(double baseStep, double ctrlStep, double shiftStep) {
+        this.scrollStep = baseStep;
+        this.scrollStepCtrl = ctrlStep;
+        this.scrollStepShift = shiftStep;
+        this.usingScrollStep = true;
+        return this;
+    }
+
+    /**
+     *  Sets the usingScrollStep flag
+     * @param usingScrollStep - sets the scroll step on or off
+     * @return this
+     */
+    public TextFieldWidget usingScrollStep(boolean usingScrollStep) {
+        this.usingScrollStep = usingScrollStep;
         return this;
     }
 

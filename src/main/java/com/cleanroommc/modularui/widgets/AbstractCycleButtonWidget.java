@@ -18,6 +18,7 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.widget.SingleChildWidget;
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,10 +29,10 @@ public class AbstractCycleButtonWidget<W extends AbstractCycleButtonWidget<W>> e
 
     private static final RichTooltip[] EMPTY_TOOLTIP = new RichTooltip[0];
 
-    private int stateCount = 1;
+    @Getter private int stateCount = 1;
     private boolean explicitStateCount = false;
     private boolean hasCount = false;
-    private IIntValue<?> intValue;
+    @Getter private IIntValue<?> intValue;
     private int lastValue = -1;
     protected IDrawable[] background = null;
     protected IDrawable[] hoverBackground = null;
@@ -40,6 +41,8 @@ public class AbstractCycleButtonWidget<W extends AbstractCycleButtonWidget<W>> e
     protected RichTooltip[] tooltip = EMPTY_TOOLTIP;
     protected IWidget[] stateChildren = null;
     protected IWidget fallbackChild = null;
+    private boolean playClickSound = true;
+    private Runnable clickSound;
 
     @Override
     public void onInit() {
@@ -140,6 +143,16 @@ public class AbstractCycleButtonWidget<W extends AbstractCycleButtonWidget<W>> e
         markTooltipDirty();
     }
 
+    public void playClickSound() {
+        if (this.playClickSound) {
+            if (this.clickSound != null) {
+                this.clickSound.run();
+            } else {
+                Interactable.playButtonClickSound();
+            }
+        }
+    }
+
     private void updateChild(int state) {
         IWidget child = this.stateChildren != null && this.stateChildren.length > state ? this.stateChildren[state] : null;
         if (child != null) {
@@ -154,11 +167,11 @@ public class AbstractCycleButtonWidget<W extends AbstractCycleButtonWidget<W>> e
         switch (mouseButton) {
             case 0:
                 next();
-                Interactable.playButtonClickSound();
+                playClickSound();
                 return Result.SUCCESS;
             case 1:
                 prev();
-                Interactable.playButtonClickSound();
+                playClickSound();
                 return Result.SUCCESS;
         }
         return Result.IGNORE;
@@ -636,11 +649,13 @@ public class AbstractCycleButtonWidget<W extends AbstractCycleButtonWidget<W>> e
         return getThis();
     }
 
-    public int getStateCount() {
-        return stateCount;
+    public W playClickSound(boolean play) {
+        this.playClickSound = play;
+        return getThis();
     }
 
-    public IIntValue<?> getIntValue() {
-        return intValue;
+    public W clickSound(Runnable clickSound) {
+        this.clickSound = clickSound;
+        return getThis();
     }
 }

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -62,6 +63,10 @@ public class WidgetTree extends TreeUtil {
         return foreachChildWithResult(parent, w -> w.isName(name) ? w : null, true);
     }
 
+    public static Optional<IWidget> findFirstWithNameOptional(IWidget parent, String name) {
+        return Optional.ofNullable(findFirstWithNameNullable(parent, name));
+    }
+
     /**
      * Finds the first widget in the sub widget tree that matches the given name.
      *
@@ -90,6 +95,10 @@ public class WidgetTree extends TreeUtil {
     @SuppressWarnings("unchecked")
     public static <T extends IWidget> @Nullable T findFirstWithNameNullable(IWidget parent, String name, Class<T> type) {
         return foreachChildWithResult(parent, w -> w.isNameAndType(name, type) ? (T) w : null, true);
+    }
+
+    public static <T extends IWidget> Optional<T> findFirstWithNameOptional(IWidget parent, String name, Class<T> type) {
+        return Optional.ofNullable(findFirstWithNameNullable(parent, name, type));
     }
 
     /**
@@ -125,6 +134,10 @@ public class WidgetTree extends TreeUtil {
         return InternalWidgetTree.findChildAt(parent, IWidget.class, path, 0, true);
     }
 
+    public static Optional<IWidget> findChildAtOptional(IWidget parent, String... path) {
+        return Optional.ofNullable(findChildAtNullable(parent, path));
+    }
+
     /**
      * Finds a child of a parent at a given path. Each part of the path is name of a widget. That means every widget in the path to the
      * target must be named and their names must be included in order.
@@ -155,6 +168,10 @@ public class WidgetTree extends TreeUtil {
     public static <T extends IWidget> @Nullable T findChildAtNullable(IWidget parent, Class<T> type, String... path) {
         if (path.length == 0) throw new IllegalArgumentException("Path to child must not be empty!");
         return InternalWidgetTree.findChildAt(parent, type, path, 0, true);
+    }
+
+    public static <T extends IWidget> Optional<T> findChildAtOptional(IWidget parent, Class<T> type, String... path) {
+        return Optional.ofNullable(findChildAtNullable(parent, type, path));
     }
 
     /**

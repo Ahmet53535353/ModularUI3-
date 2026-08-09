@@ -5,6 +5,9 @@ import com.cleanroommc.modularui.utils.FluidTankHandler;
 import com.cleanroommc.modularui.utils.IMultiFluidTankHandler;
 import com.cleanroommc.modularui.utils.MouseData;
 
+import com.google.common.base.Predicates;
+import lombok.Getter;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -19,6 +22,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Predicate;
 
 public class FluidSlotSyncHandler extends ValueSyncHandler<FluidStack> {
 
@@ -37,11 +42,15 @@ public class FluidSlotSyncHandler extends ValueSyncHandler<FluidStack> {
 
     @Nullable
     private FluidStack cache;
-    private final IFluidTank fluidTank;
+    @Getter private final IFluidTank fluidTank;
     private final IFluidHandler fluidHandler;
-    private boolean canFillSlot = true, canDrainSlot = true, controlsAmount = true, phantom = false;
+    private boolean canFillSlot = true;
+    private boolean canDrainSlot = true;
+    private boolean controlsAmount = true;
+    @Getter private boolean phantom = false;
     @Nullable
     private FluidStack lastStoredPhantomFluid;
+    @Getter private Predicate<FluidStack> filter = Predicates.alwaysTrue();
 
     public FluidSlotSyncHandler(IFluidTank fluidTank) {
         this.fluidTank = fluidTank;
@@ -215,6 +224,7 @@ public class FluidSlotSyncHandler extends ValueSyncHandler<FluidStack> {
                 FluidStack cellFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
                 if ((this.controlsAmount || currentFluid == null) && cellFluid != null) {
                     if (this.canFillSlot) {
+                        if (!this.filter.test(cellFluid)) return;
                         if (!this.controlsAmount) {
                             cellFluid.amount = 1;
                         }
@@ -282,10 +292,6 @@ public class FluidSlotSyncHandler extends ValueSyncHandler<FluidStack> {
         player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
     }
 
-    public IFluidTank getFluidTank() {
-        return this.fluidTank;
-    }
-
     public boolean canDrainSlot() {
         return this.canDrainSlot;
     }
@@ -296,10 +302,6 @@ public class FluidSlotSyncHandler extends ValueSyncHandler<FluidStack> {
 
     public boolean controlsAmount() {
         return this.controlsAmount;
-    }
-
-    public boolean isPhantom() {
-        return this.phantom;
     }
 
     public FluidSlotSyncHandler phantom(boolean phantom) {
@@ -322,6 +324,11 @@ public class FluidSlotSyncHandler extends ValueSyncHandler<FluidStack> {
 
     public FluidSlotSyncHandler canFillSlot(boolean canFillSlot) {
         this.canFillSlot = canFillSlot;
+        return this;
+    }
+
+    public FluidSlotSyncHandler filter(Predicate<FluidStack> filter) {
+        this.filter = filter;
         return this;
     }
 }

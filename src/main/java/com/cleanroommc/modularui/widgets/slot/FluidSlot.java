@@ -22,6 +22,8 @@ import com.cleanroommc.modularui.utils.Platform;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.widgets.AbstractFluidDisplayWidget;
 
+import lombok.Getter;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -49,7 +51,7 @@ public class FluidSlot extends AbstractFluidDisplayWidget<FluidSlot> implements 
     }
 
     private FluidSlotSyncHandler syncHandler;
-    private boolean alwaysShowFull = true;
+    @Getter private boolean alwaysShowFull = true;
 
     public FluidSlot() {
         tooltip().setAutoUpdate(true);
@@ -206,7 +208,7 @@ public class FluidSlot extends AbstractFluidDisplayWidget<FluidSlot> implements 
 
     @Nullable
     public FluidStack getFluidStack() {
-        return this.syncHandler == null ? null : this.syncHandler.getValue();
+        return this.syncHandler == null ? null : this.syncHandler.getOrDefault(null);
     }
 
     public IFluidTank getFluidTank() {
@@ -294,9 +296,5 @@ public class FluidSlot extends AbstractFluidDisplayWidget<FluidSlot> implements 
             throw new IllegalStateException("Widget is not initialised or not synced!");
         }
         return syncHandler;
-    }
-
-    public boolean isAlwaysShowFull() {
-        return alwaysShowFull;
     }
 }

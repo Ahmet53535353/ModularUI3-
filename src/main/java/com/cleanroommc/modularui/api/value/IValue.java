@@ -1,5 +1,7 @@
 package com.cleanroommc.modularui.api.value;
 
+import java.util.function.Supplier;
+
 /**
  * A value wrapper for widgets.
  *
@@ -20,6 +22,16 @@ public interface IValue<T> extends ISyncOrValue {
      * @param value new value
      */
     void setValue(T value);
+
+    default T getOrDefault(T defaultValue) {
+        T t = getValue();
+        return t != null ? t : defaultValue;
+    }
+
+    default T getOrElse(Supplier<T> defaultValue) {
+        T t = getValue();
+        return t != null ? t : defaultValue.get();
+    }
 
     Class<T> getValueType();
 
