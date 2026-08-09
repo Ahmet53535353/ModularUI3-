@@ -1,0 +1,38 @@
+[versions]
+annotations = "26.1.0"
+jspecify = "1.0.0"
+assertj = "3.27.7"
+
+# Embed
+joml = "1.10.8"
+
+# Dev-only mods (deobfuscated via RFG, curse.maven file ids)
+bogoSorter = "7412409-sources-7412411"
+baubles = "2518667"
+nea = "6533650-sources-6533651"
+keyBindingPatch = "5951859"
+
+jei = "4.16.1.302"
+hei = "4.31.2"
+theOneProbe = "1.12-1.4.28"
+
+# Lombok (for evalex)
+lombok = "1.18.42"
+
+[libraries]
+annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+
+joml = { module = "org.joml:joml", version.ref = "joml" }
+
+bogo-sorter = { module = "curse.maven:inventory-bogosorter-632327", version.ref = "bogoSorter" }
+baubles = { module = "curse.maven:baubles-227083", version.ref = "baubles" }
+nea = { module = "curse.maven:neverenoughanimation-1062347", version.ref = "nea" }
+key-binding-patch = { module = "curse.maven:key_binding_patch-928895", version.ref = "keyBindingPatch" }
+
+jei = { module = "mezz.jei:jei_1.12.2", version.ref = "jei" }
+hei = { module = "mezz:jei", version.ref = "hei" }
+theOneProbe = { module = "maven.modrinth:the-one-probe", version.ref = "theOneProbe" }
+
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }

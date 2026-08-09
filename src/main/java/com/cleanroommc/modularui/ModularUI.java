@@ -15,24 +15,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-@Mod(modid = ModularUI.ID,
-        name = ModularUI.NAME,
-        version = ModularUI.VERSION,
-        acceptedMinecraftVersions = "[1.12,)",
+@Mod(modid = Tags.MOD_ID,
+        name = Tags.MOD_NAME,
+        version = Tags.MOD_VERSION,
+        acceptedMinecraftVersions = Tags.MC_VERSION,
         dependencies = "required-after:mixinbooter@[8.0,);" +
                 "before:bogosorter@[1.6.1,);" +
                 "after-client:neverenoughanimations@[1.0.6,)")
 public class ModularUI {
 
-    public static final String ID = MuiTags.MODID;
-    public static final String NAME = "Modular UI";
-    public static final String VERSION = MuiTags.VERSION;
-    public static final Logger LOGGER = LogManager.getLogger(ID);
+    public static final Logger LOGGER = LogManager.getLogger(Tags.MOD_ID);
 
     public static final String BOGO_SORT = "bogosorter";
 
     @SidedProxy(
-            modId = ID,
+            modId = Tags.MOD_ID,
             clientSide = "com.cleanroommc.modularui.ClientProxy",
             serverSide = "com.cleanroommc.modularui.CommonProxy")
     public static CommonProxy proxy;

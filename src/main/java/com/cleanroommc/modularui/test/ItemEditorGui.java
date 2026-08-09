@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.test;
 
-import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.GuiData;
@@ -46,7 +46,7 @@ public class ItemEditorGui implements IGuiHolder<GuiData> {
 
     @Override
     public ModularScreen createScreen(GuiData data, ModularPanel mainPanel) {
-        return new ModularScreen(ModularUI.ID, mainPanel);
+        return new ModularScreen(Tags.MOD_ID, mainPanel);
     }
 
     @Override

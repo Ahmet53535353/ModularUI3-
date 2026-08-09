@@ -1,6 +1,7 @@
 package com.cleanroommc.modularui.test;
 
 import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.IThemeApi;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
@@ -36,7 +37,7 @@ public class TestGui extends CustomModularScreen {
     private Map<String, AvailableElement> availableElements;
 
     public TestGui() {
-        super(ModularUI.ID);
+        super(Tags.MOD_ID);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.cleanroommc.modularui.drawable;
 
 import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.IJsonSerializable;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
@@ -25,7 +26,7 @@ public class UITexture implements IDrawable, IJsonSerializable {
 
     public static final UITexture DEFAULT = fullImage("gui/options_background", ColorType.DEFAULT);
 
-    private static final ResourceLocation ICONS_LOCATION = new ResourceLocation(ModularUI.ID, "textures/gui/icons.png");
+    private static final ResourceLocation ICONS_LOCATION = new ResourceLocation(Tags.MOD_ID, "textures/gui/icons.png");
 
     // only for usage in GuiTextures
     static UITexture icon(String name, int x, int y, int w, int h) {
@@ -217,7 +218,7 @@ public class UITexture implements IDrawable, IJsonSerializable {
             return GuiTextures.HELP;
         }
         Builder builder = builder();
-        builder.location(JsonHelper.getString(json, ModularUI.ID + ":gui/widgets/error", "location"))
+        builder.location(JsonHelper.getString(json, Tags.MOD_ID + ":gui/widgets/error", "location"))
                 .imageSize(JsonHelper.getInt(json, defaultImageWidth, "imageWidth", "iw"), JsonHelper.getInt(json, defaultImageHeight, "imageHeight", "ih"));
         boolean mode1 = json.has("x") || json.has("y") || json.has("w") || json.has("h") || json.has("width") || json.has("height");
         boolean mode2 = json.has("u0") || json.has("v0") || json.has("u1") || json.has("u1");

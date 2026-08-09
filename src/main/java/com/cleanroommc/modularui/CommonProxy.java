@@ -69,8 +69,8 @@ public class CommonProxy {
 
     @SubscribeEvent
     public void onConfigChange(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.getModID().equals(ModularUI.ID)) {
-            ConfigManager.sync(ModularUI.ID, Config.Type.INSTANCE);
+        if (event.getModID().equals(Tags.MOD_ID)) {
+            ConfigManager.sync(Tags.MOD_ID, Config.Type.INSTANCE);
         }
     }
 

@@ -5,7 +5,7 @@ import com.cleanroommc.modularui.screen.RichTooltip;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
-@Config(modid = ModularUI.ID)
+@Config(modid = Tags.MOD_ID)
 public class ModularUIConfig {
 
     @Config.Comment("Amount of pixels scrolled")

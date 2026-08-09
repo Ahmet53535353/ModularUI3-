@@ -1,6 +1,7 @@
 package com.cleanroommc.modularui.screen;
 
 import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -21,7 +22,7 @@ public abstract class CustomModularScreen extends ModularScreen {
     @ApiStatus.ScheduledForRemoval(inVersion = "3.2.0")
     @Deprecated
     public CustomModularScreen() {
-        super(ModularUI.ID);
+        super(Tags.MOD_ID);
         if (ModularUI.isDev) {
             ModularUI.LOGGER.error("The single arg ModularScreen constructor should not be used. Use the other one and pass in your mod id.");
         }

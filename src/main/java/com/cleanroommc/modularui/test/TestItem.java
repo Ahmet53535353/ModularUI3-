@@ -2,6 +2,7 @@ package com.cleanroommc.modularui.test;
 
 import com.cleanroommc.modularui.ClientProxy;
 import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.GuiFactories;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
@@ -50,7 +51,7 @@ public class TestItem extends Item implements IGuiHolder<PlayerInventoryGuiData>
 
     @Override
     public ModularScreen createScreen(PlayerInventoryGuiData data, ModularPanel mainPanel) {
-        return new ModularScreen(ModularUI.ID, mainPanel);
+        return new ModularScreen(Tags.MOD_ID, mainPanel);
     }
 
     @Override

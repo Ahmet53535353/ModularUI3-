@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.overlay;
 
-import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.IMuiScreen;
 import com.cleanroommc.modularui.api.drawable.IIcon;
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -30,7 +30,7 @@ public class DebugOverlay extends CustomModularScreen {
     private final IMuiScreen parent;
 
     public DebugOverlay(IMuiScreen screen) {
-        super(ModularUI.ID);
+        super(Tags.MOD_ID);
         this.parent = screen;
     }
 

@@ -1,6 +1,7 @@
 package com.cleanroommc.modularui.test;
 
 import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.animation.Animator;
 import com.cleanroommc.modularui.animation.IAnimator;
 import com.cleanroommc.modularui.animation.Wait;
@@ -111,7 +112,7 @@ public class TestGuis extends CustomModularScreen {
     public static boolean withCode = false;
 
     public TestGuis() {
-        super(ModularUI.ID);
+        super(Tags.MOD_ID);
     }
 
     /**
@@ -157,7 +158,7 @@ public class TestGuis extends CustomModularScreen {
                                                                 .leftRel(1f)
                                                                 .heightRel(1f));
                                                     }
-                                                    ClientGUI.open(new ModularScreen(ModularUI.ID, panel).openParentOnClose(true));
+                                                    ClientGUI.open(new ModularScreen(Tags.MOD_ID, panel).openParentOnClose(true));
                                                 } catch (IllegalAccessException | InvocationTargetException e) {
                                                     ModularUI.LOGGER.throwing(e);
                                                 }

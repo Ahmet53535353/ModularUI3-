@@ -1,7 +1,7 @@
 package com.cleanroommc.modularui.test;
 
-import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.ModularUIConfig;
+import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.IThemeApi;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IIcon;
@@ -144,7 +144,7 @@ public class TestEventHandler {
         TextWidget<?> title = new TextWidget<>(IKey.str("ModularUI"));
         int[] colors = {Color.WHITE.main, Color.AMBER.main, Color.BLUE.main, Color.GREEN.main, Color.DEEP_PURPLE.main, Color.RED.main};
         AtomicInteger k = new AtomicInteger();
-        return new ModularScreen(ModularUI.ID,
+        return new ModularScreen(Tags.MOD_ID,
                 ModularPanel.defaultPanel("overlay")
                         .fullScreenInvisible()
                         .child(title.scale(5f)
@@ -165,7 +165,7 @@ public class TestEventHandler {
 
     @SideOnly(Side.CLIENT)
     private ModularScreen getContainerOverlayTest(GuiContainer gui) {
-        return new CustomModularScreen(ModularUI.ID) {
+        return new CustomModularScreen(Tags.MOD_ID) {
 
             @Override
             public @NotNull ModularPanel buildUI(ModularGuiContext context) {
@@ -187,11 +187,11 @@ public class TestEventHandler {
     }
 
     public static void preInit() {
-        ResourceLocation rl = new ResourceLocation(ModularUI.ID, "test_block");
+        ResourceLocation rl = new ResourceLocation(Tags.MOD_ID, "test_block");
         TestBlock.testBlock.setRegistryName(rl);
         TestBlock.testItemBlock.setRegistryName(rl);
         GameRegistry.registerTileEntity(TestTile.class, rl);
-        TestItem.testItem.setRegistryName(ModularUI.ID, "test_item");
+        TestItem.testItem.setRegistryName(Tags.MOD_ID, "test_item");
     }
 
     @SubscribeEvent

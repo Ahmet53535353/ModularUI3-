@@ -1,6 +1,7 @@
 package com.cleanroommc.modularui.screen;
 
 import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.IMuiScreen;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
@@ -96,7 +97,7 @@ public class ModularScreen {
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "3.2.0")
     public ModularScreen(@NotNull ModularPanel mainPanel) {
-        this(ModularUI.ID, mainPanel);
+        this(Tags.MOD_ID, mainPanel);
         if (ModularUI.isDev) {
             ModularUI.LOGGER.warn("The single arg ModularScreen constructor should not be used. Use the any of the other ones and pass in your mod id.");
         }

@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.network;
 
-import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.network.packets.CloseAllGuiPacket;
 import com.cleanroommc.modularui.network.packets.CloseGuiPacket;
 import com.cleanroommc.modularui.network.packets.OpenGuiPacket;
@@ -22,7 +22,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class NetworkHandler {
 
-    public static final SimpleNetworkWrapper CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(ModularUI.ID);
+    public static final SimpleNetworkWrapper CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(Tags.MOD_ID);
     private static int packetId = 0;
 
     public static void init() {
