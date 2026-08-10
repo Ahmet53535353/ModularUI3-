@@ -9,6 +9,7 @@ import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.Platform;
 
+import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ public class GraphDrawable implements IDrawable {
     private float minorGridLineWidth = 0f;
     private int minorGridLineColor = Color.withAlpha(Color.BLACK.main, 0.15f);
 
-    private final GraphAxis x = new GraphAxis(GuiAxis.X), y = new GraphAxis(GuiAxis.Y);
+    @Getter private final GraphAxis x = new GraphAxis(GuiAxis.X);
+    @Getter private final GraphAxis y = new GraphAxis(GuiAxis.Y);
     private final List<Plot> plots = new ArrayList<>();
 
     private boolean dirty = true;
@@ -107,14 +109,6 @@ public class GraphDrawable implements IDrawable {
             }
         }
         return true;
-    }
-
-    public GraphAxis getX() {
-        return x;
-    }
-
-    public GraphAxis getY() {
-        return y;
     }
 
     public GraphDrawable autoXLim() {
@@ -268,5 +262,37 @@ public class GraphDrawable implements IDrawable {
     public GraphDrawable graphAspectRatio(float aspectRatio) {
         this.view.setAspectRatio(aspectRatio);
         return this;
+    }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof GraphDrawable)) return false;
+        GraphDrawable that = (GraphDrawable) o;
+        return backgroundColor == that.backgroundColor && Float.compare(majorTickThickness, that.majorTickThickness) == 0 &&
+                Float.compare(majorTickLength, that.majorTickLength) == 0 &&
+                Float.compare(minorTickThickness, that.minorTickThickness) == 0 &&
+                Float.compare(minorTickLength, that.minorTickLength) == 0 && Float.compare(gridLineWidth, that.gridLineWidth) == 0 &&
+                gridLineColor == that.gridLineColor && Float.compare(minorGridLineWidth, that.minorGridLineWidth) == 0 &&
+                minorGridLineColor == that.minorGridLineColor && view.equals(that.view) && x.equals(that.x) && y.equals(that.y) &&
+                plots.equals(that.plots);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = view.hashCode();
+        result = 31 * result + backgroundColor;
+        result = 31 * result + Float.hashCode(majorTickThickness);
+        result = 31 * result + Float.hashCode(majorTickLength);
+        result = 31 * result + Float.hashCode(minorTickThickness);
+        result = 31 * result + Float.hashCode(minorTickLength);
+        result = 31 * result + Float.hashCode(gridLineWidth);
+        result = 31 * result + gridLineColor;
+        result = 31 * result + Float.hashCode(minorGridLineWidth);
+        result = 31 * result + minorGridLineColor;
+        result = 31 * result + x.hashCode();
+        result = 31 * result + y.hashCode();
+        result = 31 * result + plots.hashCode();
+        return result;
     }
 }

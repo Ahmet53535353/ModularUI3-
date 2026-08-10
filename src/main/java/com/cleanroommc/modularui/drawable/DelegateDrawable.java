@@ -4,6 +4,7 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.widget.Widget;
+import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,5 +61,17 @@ public class DelegateDrawable implements IDrawable {
     @Override
     public Icon asIcon() {
         return this.drawable.asIcon();
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DelegateDrawable that)) return false;
+        return Objects.equals(drawable, that.drawable);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(drawable);
     }
 }

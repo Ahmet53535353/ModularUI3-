@@ -11,20 +11,22 @@ import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.Interpolation;
 
+import lombok.Getter;
+
 public class ScrollingTextWidget extends TextWidget<ScrollingTextWidget> {
 
     private TextRenderer.Line line;
-    private float progress = 0;
-    private IAnimator animator;
-    private Animator forward;
-    private Animator backward;
-    private int speed = 15;
+    @Getter private float progress = 0;
+    @Getter private IAnimator animator;
+    @Getter private Animator forward;
+    @Getter private Animator backward;
+    @Getter private int speed = 15;
 
     public ScrollingTextWidget(IKey key) {
         super(key);
         tooltipBuilder(tooltip -> {
             tooltip.showUpTimer(10);
-            if (this.line.getWidth() > getArea().width) {
+            if (this.line.width() > getArea().width) {
                 tooltip.addLine(key);
             }
         });
@@ -65,6 +67,7 @@ public class ScrollingTextWidget extends TextWidget<ScrollingTextWidget> {
         TextRenderer renderer = TextRenderer.SHARED;
         renderer.setColor(getColor() != null ? getColor().getAsInt() : theme.getTextColor());
         renderer.setAlignment(getAlignment(), getArea().w(), getArea().h());
+        //noinspection DataFlowIssue
         renderer.setShadow(isShadow() != null ? isShadow() : theme.getTextShadow());
         renderer.setPos(getArea().getPadding().getLeft(), getArea().getPadding().getTop());
         renderer.setScale(getScale());
@@ -109,25 +112,5 @@ public class ScrollingTextWidget extends TextWidget<ScrollingTextWidget> {
         this.backward = animator.copy(true);
         this.animator = new SequentialAnimator(this.forward, new Wait(500), this.backward, new Wait(1000)).repeatsOnFinish(20);
         return this;
-    }
-
-    public float getProgress() {
-        return progress;
-    }
-
-    public IAnimator getAnimator() {
-        return animator;
-    }
-
-    public Animator getForward() {
-        return forward;
-    }
-
-    public Animator getBackward() {
-        return backward;
-    }
-
-    public int getSpeed() {
-        return speed;
     }
 }

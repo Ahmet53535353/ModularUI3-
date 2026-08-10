@@ -41,4 +41,19 @@ public class SpriteDrawable implements IDrawable {
         this.canApplyTheme = canApplyTheme;
         return this;
     }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof SpriteDrawable that)) return false;
+        return canApplyTheme == that.canApplyTheme &&
+                sprite.getIconName().equals(that.sprite.getIconName());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = sprite.getIconName().hashCode();
+        result = 31 * result + Boolean.hashCode(canApplyTheme);
+        return result;
+    }
 }

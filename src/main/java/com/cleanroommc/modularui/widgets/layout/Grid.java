@@ -133,8 +133,8 @@ public class Grid extends AbstractScrollWidget<IWidget, Grid> implements ILayout
                     if (rowAlignmentOverride) alignment = rowAlignments[r];
                     if (colAlignmentOverride) alignment = colAlignments[c];
 
-                    child.getArea().rx = (int) (x + xs + (width - xs - xe - area.width) * alignment.x);
-                    child.getArea().ry = (int) (y + ys + (height - ys - ye - area.height) * alignment.y);
+                    child.getArea().rx = (int) (x + xs + (width - xs - xe - area.width) * alignment.x());
+                    child.getArea().ry = (int) (y + ys + (height - ys - ye - area.height) * alignment.y());
                     child.resizer().setPosResized(true, true);
                 }
                 x += width;

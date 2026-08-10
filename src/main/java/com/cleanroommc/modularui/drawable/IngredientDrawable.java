@@ -4,6 +4,9 @@ import com.cleanroommc.modularui.api.IJsonSerializable;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
+import java.util.Arrays;
+
+import lombok.Getter;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -11,6 +14,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+@Getter
 public class IngredientDrawable implements IDrawable, IJsonSerializable {
 
     private ItemStack[] items;
@@ -35,20 +39,12 @@ public class IngredientDrawable implements IDrawable, IJsonSerializable {
         }
     }
 
-    public ItemStack[] getItems() {
-        return this.items;
-    }
-
     public void setItems(ItemStack... items) {
         this.items = items;
     }
 
     public void setItems(Ingredient ingredient) {
         setItems(ingredient.getMatchingStacks());
-    }
-
-    public int getCycleTime() {
-        return cycleTime;
     }
 
     /**
@@ -60,5 +56,19 @@ public class IngredientDrawable implements IDrawable, IJsonSerializable {
     public IngredientDrawable cycleTime(int cycleTime) {
         this.cycleTime = cycleTime;
         return this;
+    }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof IngredientDrawable that)) return false;
+        return cycleTime == that.cycleTime && Arrays.equals(items, that.items);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(items);
+        result = 31 * result + cycleTime;
+        return result;
     }
 }

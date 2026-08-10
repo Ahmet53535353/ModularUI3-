@@ -145,16 +145,16 @@ public class IconRenderer {
     }
 
     protected int getStartY(int totalHeight) {
-        if (this.alignment.y > 0 && this.maxHeight > 0) {
+        if (this.alignment.y() > 0 && this.maxHeight > 0) {
             float height = totalHeight * this.scale;
-            return (int) (this.y + (this.maxHeight * this.alignment.y) - height * this.alignment.y);
+            return (int) (this.y + (this.maxHeight * this.alignment.y()) - height * this.alignment.y());
         }
         return this.y;
     }
 
     protected int getStartX(float lineWidth) {
-        if (this.alignment.x > 0 && this.maxWidth > 0) {
-            return (int) (this.x + (this.maxWidth * this.alignment.x) - lineWidth * this.alignment.x);
+        if (this.alignment.x() > 0 && this.maxWidth > 0) {
+            return (int) (this.x + (this.maxWidth * this.alignment.x()) - lineWidth * this.alignment.x());
         }
         return this.x;
     }

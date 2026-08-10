@@ -13,11 +13,9 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-public class Alignment {
+public record Alignment(float x, float y) {
 
     private static final Map<String, Alignment> ALIGNMENT_MAP = new Object2ObjectOpenHashMap<>();
-
-    public final float x, y;
 
     public static final Alignment TopLeft = new Alignment(0, 0, "TopLeft");
     public static final Alignment TopCenter = new Alignment(0.5f, 0, "TopCenter");
@@ -44,13 +42,8 @@ public class Alignment {
             BottomLeft, BottomRight
     };
 
-    public Alignment(float x, float y) {
-        this(x, y, null);
-    }
-
     private Alignment(float x, float y, String name) {
-        this.x = x;
-        this.y = y;
+        this(x, y);
         if (name != null) {
             ALIGNMENT_MAP.put(name, this);
             ALIGNMENT_MAP.put(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name), this);
@@ -141,4 +134,13 @@ public class Alignment {
             });
         }
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Alignment(float x1, float y1))) return false;
+        return Float.compare(x1, x) == 0 && Float.compare(y1, y) == 0;
+    }
+
 }

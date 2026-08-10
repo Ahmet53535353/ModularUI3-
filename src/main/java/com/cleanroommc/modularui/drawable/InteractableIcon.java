@@ -4,6 +4,7 @@ import com.cleanroommc.modularui.api.UpOrDown;
 import com.cleanroommc.modularui.api.drawable.IIcon;
 import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.api.widget.Interactable;
+import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -111,5 +112,29 @@ public class InteractableIcon extends DelegateIcon implements Interactable {
     public InteractableIcon onKeyTapped(IGuiAction.KeyPressed keyTapped) {
         this.keyTapped = keyTapped;
         return this;
+    }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof InteractableIcon that)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(mousePressed, that.mousePressed) && Objects.equals(mouseReleased, that.mouseReleased) &&
+                Objects.equals(mouseTapped, that.mouseTapped) && Objects.equals(mouseScroll, that.mouseScroll) &&
+                Objects.equals(keyPressed, that.keyPressed) && Objects.equals(keyReleased, that.keyReleased) &&
+                Objects.equals(keyTapped, that.keyTapped);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + Objects.hashCode(mousePressed);
+        result = 31 * result + Objects.hashCode(mouseReleased);
+        result = 31 * result + Objects.hashCode(mouseTapped);
+        result = 31 * result + Objects.hashCode(mouseScroll);
+        result = 31 * result + Objects.hashCode(keyPressed);
+        result = 31 * result + Objects.hashCode(keyReleased);
+        result = 31 * result + Objects.hashCode(keyTapped);
+        return result;
     }
 }

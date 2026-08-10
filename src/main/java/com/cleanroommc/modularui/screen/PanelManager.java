@@ -9,6 +9,7 @@ import com.cleanroommc.modularui.utils.ReverseIterable;
 import com.cleanroommc.modularui.widget.WidgetTree;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import lombok.val;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -215,12 +216,43 @@ public class PanelManager {
         getTopMostPanel().closeIfOpen();
     }
 
+    /**
+     * Closes all panels at once. Every open panel is finalized and the state is set to closed, but the panels
+     * are not removed from this manager, so they can be reopened. The screen itself is not closed here; the
+     * caller is responsible for closing it, e.g. via {@link com.cleanroommc.modularui.screen.ModularScreen#close(boolean)}.
+     *
+     * @return if this screen was open
+     */
     public boolean closeAll() {
         if (this.state.isOpen) {
             // any open panel will be set to closed, but will not actually be removed, so it can be reopened
             this.panels.forEach(this::finalizePanel);
             setState(State.CLOSED);
             this.screen.onClose();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Closes all panels and the screen. Should not be used for overlays or embeds.
+     *
+     * @return if this screen was open
+     */
+    public boolean closePanelsAndScreen() {
+        if (this.state.isOpen) {
+            // create a list with non-main panels
+            // looping directly over panels may cause CME
+            List<ModularPanel> subPanels = new ArrayList<>();
+            for (val panel : this.panels) {
+                if (panel != this.mainPanel) subPanels.add(panel);
+            }
+            // close all non-main panels
+            for (val panel : subPanels) {
+                panel.closeIfOpen();
+            }
+            // finally close main panel
+            this.mainPanel.closeIfOpen();
             return true;
         }
         return false;

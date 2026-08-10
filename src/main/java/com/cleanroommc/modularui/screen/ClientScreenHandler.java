@@ -351,15 +351,34 @@ public class ClientScreenHandler {
             ModularUIConfig.guiDebugMode = !ModularUIConfig.guiDebugMode;
             return true;
         }
-        if (keyCode == 1 || (Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode) && !isRecipeViewerSearchFocused())) {
-            if (currentScreen.getContext().hasDraggable()) {
-                currentScreen.getContext().dropDraggable(true);
-            } else {
-                currentScreen.getPanelManager().closeTopPanel();
+        boolean hasLevel = Minecraft.getMinecraft().world != null;
+        if (keyCode == 1) {
+            if (hasLevel) {
+                // close everything in world
+                if (currentScreen.getContext().hasDraggable()) {
+                    currentScreen.getContext().dropDraggable(true);
+                }
+                currentScreen.getPanelManager().closePanelsAndScreen();
+            } else if (!currentScreen.getPanelManager().getTopMostPanel().isMainPanel()) {
+                // close top panel if it is not the main panel
+                dropOrClosePanel();
             }
             return true;
         }
+        if (!hasLevel) return false; // E only closes in world
+        if (Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode) && !isRecipeViewerSearchFocused()) {
+            dropOrClosePanel();
+            return true;
+        }
         return false;
+    }
+
+    private static void dropOrClosePanel() {
+        if (currentScreen.getContext().hasDraggable()) {
+            currentScreen.getContext().dropDraggable(true);
+        } else {
+            currentScreen.getPanelManager().closeTopPanel();
+        }
     }
 
     private static boolean isRecipeViewerSearchFocused() {

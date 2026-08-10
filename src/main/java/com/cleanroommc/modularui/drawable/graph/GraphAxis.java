@@ -81,8 +81,8 @@ public class GraphAxis {
         for (int i = 0; i < this.tickLabels.length; i++) {
             if (Double.isNaN(this.majorTicks[i])) break;
             this.tickLabels[i] = textRenderer.line(format.format(this.majorTicks[i]));
-            if (this.tickLabels[i].getWidth() > this.maxLabelWidth) {
-                this.maxLabelWidth = this.tickLabels[i].getWidth();
+            if (this.tickLabels[i].width() > this.maxLabelWidth) {
+                this.maxLabelWidth = this.tickLabels[i].width();
             }
         }
     }
@@ -170,7 +170,7 @@ public class GraphAxis {
                 if (Double.isNaN(pos)) break;
                 if (pos < min || pos > max) continue;
                 textRenderer.setPos((int) (view.g2sX(pos) - 50), (int) y);
-                textRenderer.draw(this.tickLabels[i].getText());
+                textRenderer.draw(this.tickLabels[i].text());
             }
         } else {
             textRenderer.setScale(TICK_LABEL_SCALE);
@@ -181,7 +181,7 @@ public class GraphAxis {
                 if (Double.isNaN(pos)) break;
                 if (pos < min || pos > max) continue;
                 textRenderer.setPos((int) x, (int) (view.g2sY(pos) - 10));
-                textRenderer.draw(this.tickLabels[i].getText());
+                textRenderer.draw(this.tickLabels[i].text());
             }
         }
     }

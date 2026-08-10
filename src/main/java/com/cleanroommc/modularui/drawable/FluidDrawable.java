@@ -4,6 +4,7 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.widget.Widget;
+import java.util.Objects;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -50,4 +51,16 @@ public class FluidDrawable implements IDrawable {
         return this;
     }
 
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof FluidDrawable that)) return false;
+        return Objects.equals(fluid, that.fluid) || (fluid != null && that.fluid != null && fluid.isFluidEqual(that.fluid));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(fluid);
+    }
 }

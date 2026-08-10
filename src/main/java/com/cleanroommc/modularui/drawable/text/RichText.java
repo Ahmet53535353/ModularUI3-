@@ -10,6 +10,8 @@ import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.TooltipLines;
 
+import lombok.Getter;
+
 import net.minecraft.client.gui.FontRenderer;
 
 import java.util.ArrayList;
@@ -24,10 +26,10 @@ public class RichText implements IDrawable, IRichTextBuilder<RichText> {
 
     private final List<Object> elements = new ArrayList<>();
     private TooltipLines stringList;
-    private Alignment alignment = Alignment.CenterLeft;
-    private float scale = 1f;
-    private Integer color = null;
-    private Boolean shadow = null;
+    @Getter private Alignment alignment = Alignment.CenterLeft;
+    @Getter private float scale = 1f;
+    @Getter private Integer color = null;
+    @Getter private Boolean shadow = null;
 
     private int cursor = 0;
     private boolean cursorLocked = false;
@@ -58,22 +60,6 @@ public class RichText implements IDrawable, IRichTextBuilder<RichText> {
             }
         }
         return minWidth;
-    }
-
-    public Alignment getAlignment() {
-        return alignment;
-    }
-
-    public Boolean getShadow() {
-        return shadow;
-    }
-
-    public Integer getColor() {
-        return color;
-    }
-
-    public float getScale() {
-        return scale;
     }
 
     private void addElement(Object o) {

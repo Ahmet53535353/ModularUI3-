@@ -6,6 +6,9 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.widget.sizer.Box;
+import java.util.Objects;
+
+import lombok.Getter;
 
 import net.minecraft.client.gui.FontRenderer;
 
@@ -15,7 +18,7 @@ import net.minecraft.client.gui.FontRenderer;
  */
 public class KeyIcon implements IIcon {
 
-    private final IKey key;
+    @Getter private final IKey key;
     private FontRenderer overrideFontRenderer;
     private final Box margin = new Box();
     private boolean expandWidth, expandHeight;
@@ -64,10 +67,6 @@ public class KeyIcon implements IIcon {
     @Override
     public Box getMargin() {
         return null;
-    }
-
-    public IKey getKey() {
-        return key;
     }
 
     @Override
@@ -131,5 +130,24 @@ public class KeyIcon implements IIcon {
     @Override
     public String toString() {
         return "KeyIcon(" + this.key.get() + ")";
+    }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof KeyIcon)) return false;
+        KeyIcon that = (KeyIcon) o;
+        return expandWidth == that.expandWidth && expandHeight == that.expandHeight &&
+                Objects.equals(key, that.key) && Objects.equals(overrideFontRenderer, that.overrideFontRenderer) && margin.equals(that.margin);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(key);
+        result = 31 * result + Objects.hashCode(overrideFontRenderer);
+        result = 31 * result + margin.hashCode();
+        result = 31 * result + Boolean.hashCode(expandWidth);
+        result = 31 * result + Boolean.hashCode(expandHeight);
+        return result;
     }
 }

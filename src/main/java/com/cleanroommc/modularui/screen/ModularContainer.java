@@ -11,6 +11,8 @@ import com.cleanroommc.modularui.widgets.slot.PlayerSlotGroup;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.cleanroommc.bogosorter.api.ISortingContextBuilder;
 
+import lombok.Getter;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -48,13 +50,13 @@ public class ModularContainer extends Container {
     private static final int LEFT_MOUSE = 0;
     private static final int RIGHT_MOUSE = 1;
 
-    private EntityPlayer player;
+    @Getter private EntityPlayer player;
     private ModularSyncManager syncManager;
     private boolean init = true;
     // all phantom slots (inventory don't contain phantom slots)
     private final List<ModularSlot> phantomSlots = new ArrayList<>();
     private final List<ModularSlot> shiftClickSlots = new ArrayList<>();
-    private GuiData guiData;
+    @Getter private GuiData guiData;
     private UISettings settings;
 
     @SideOnly(Side.CLIENT)
@@ -206,14 +208,6 @@ public class ModularContainer extends Container {
 
     public boolean isClientOnly() {
         return this.syncManager == null;
-    }
-
-    public EntityPlayer getPlayer() {
-        return player;
-    }
-
-    public GuiData getGuiData() {
-        return guiData;
     }
 
     public ModularSlot getModularSlot(int index) {

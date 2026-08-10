@@ -4,6 +4,7 @@ import com.cleanroommc.modularui.api.drawable.IIcon;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.widget.sizer.Box;
+import java.util.Objects;
 
 public class DelegateIcon implements IIcon {
 
@@ -57,5 +58,17 @@ public class DelegateIcon implements IIcon {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(" + this.icon + ")";
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DelegateIcon that)) return false;
+        return Objects.equals(icon, that.icon);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(icon);
     }
 }

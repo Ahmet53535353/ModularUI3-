@@ -9,6 +9,9 @@ import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.JsonHelper;
 import com.cleanroommc.modularui.widget.sizer.Box;
+import java.util.Objects;
+
+import lombok.Getter;
 
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,7 +27,7 @@ public class Icon implements IIcon, IJsonSerializable {
     private final IDrawable drawable;
     private int width = 0, height = 0;
     private float aspectRatio = 0;
-    private Alignment alignment = Alignment.Center;
+    @Getter private Alignment alignment = Alignment.Center;
     private final Box margin = new Box();
 
     public Icon(IDrawable drawable) {
@@ -89,16 +92,12 @@ public class Icon implements IIcon, IJsonSerializable {
         }
         // apply alignment
         if (width != frameWidth) {
-            x += (int) (frameWidth * this.alignment.x - width * this.alignment.x);
+            x += (int) (frameWidth * this.alignment.x() - width * this.alignment.x());
         }
         if (height != frameHeight) {
-            y += (int) (frameHeight * this.alignment.y - height * this.alignment.y);
+            y += (int) (frameHeight * this.alignment.y() - height * this.alignment.y());
         }
         this.drawable.draw(context, x, y, width, height, widgetTheme);
-    }
-
-    public Alignment getAlignment() {
-        return this.alignment;
     }
 
     public Icon expandWidth() {
@@ -207,5 +206,24 @@ public class Icon implements IIcon, IJsonSerializable {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(" + this.drawable.getClass().getSimpleName() + ")";
+    }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Icon icon)) return false;
+        return width == icon.width && height == icon.height && Float.compare(aspectRatio, icon.aspectRatio) == 0 &&
+                Objects.equals(drawable, icon.drawable) && Objects.equals(alignment, icon.alignment) && Objects.equals(margin, icon.margin);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(drawable);
+        result = 31 * result + width;
+        result = 31 * result + height;
+        result = 31 * result + Float.hashCode(aspectRatio);
+        result = 31 * result + Objects.hashCode(alignment);
+        result = 31 * result + Objects.hashCode(margin);
+        return result;
     }
 }

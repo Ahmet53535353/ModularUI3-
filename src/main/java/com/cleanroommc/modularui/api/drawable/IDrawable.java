@@ -7,6 +7,7 @@ import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.drawable.SubAreaDrawable;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.sizer.Area;
 
@@ -153,6 +154,13 @@ public interface IDrawable {
      */
     default Icon asIcon() {
         return new Icon(this).size(getDefaultWidth(), getDefaultHeight());
+    }
+
+    /**
+     * @return a new drawable that only draws a sub area of this drawable
+     */
+    default IDrawable getSubArea(float u0, float v0, float u1, float v1) {
+        return new SubAreaDrawable(this).uv(u0, v0, u1, v1);
     }
 
     /**

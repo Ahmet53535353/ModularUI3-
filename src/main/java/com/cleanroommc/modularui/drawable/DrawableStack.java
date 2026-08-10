@@ -4,8 +4,11 @@ import com.cleanroommc.modularui.api.IJsonSerializable;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
+import java.util.Arrays;
 
 import com.google.gson.JsonObject;
+
+import lombok.Getter;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -13,6 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * A stack of {@link IDrawable} backed by an array which are drawn on top of each other.
  */
+@Getter
 public class DrawableStack implements IDrawable, IJsonSerializable {
 
     public static final IDrawable[] EMPTY_BACKGROUND = {};
@@ -41,14 +45,22 @@ public class DrawableStack implements IDrawable, IJsonSerializable {
         return false;
     }
 
-    public IDrawable[] getDrawables() {
-        return this.drawables;
-    }
-
     @Override
     public boolean saveToJson(JsonObject json) {
         // serialized as special case
         // this method should never be called
         throw new IllegalStateException();
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DrawableStack that)) return false;
+        return Arrays.equals(drawables, that.drawables);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(drawables);
     }
 }

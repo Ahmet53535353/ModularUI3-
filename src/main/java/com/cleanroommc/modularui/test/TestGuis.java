@@ -498,15 +498,15 @@ public class TestGuis extends CustomModularScreen {
                         .child(IKey.str("Any").asWidget())
                         .child(new TextFieldWidget().widthRel(1f))
                         .child(IKey.str("Decimal numbers (scroll)").asWidget())
-                        .child(new TextFieldWidget()
-                                .widthRel(1f)
-                                .setNumbersDouble(val -> Math.clamp(-1000.0, val, 1000.0))
-                                .usingScrollStep(true))
-                        .child(IKey.str("Whole numbers (scroll)").asWidget())
-                        .child(new TextFieldWidget()
-                                .widthRel(1f)
-                                .setNumbersLong(val -> Math.clamp(-100_000_000_000_000L, val, 100_000_000_000_000L))
-                                .usingScrollStep(true)));
+                                .child(new TextFieldWidget()
+                                        .widthRel(1f)
+                                        .numbersDouble(-1000, 1000)
+                                        .usingScrollStep(true))
+                                .child(IKey.str("Whole numbers (scroll)").asWidget())
+                                .child(new TextFieldWidget()
+                                        .widthRel(1f)
+                                        .numbersLong(-100_000_000_000_000L, 100_000_000_000_000L)
+                                        .usingScrollStep(true)));
     }
 
     public static @NotNull ModularPanel buildColorTheoryUI() {

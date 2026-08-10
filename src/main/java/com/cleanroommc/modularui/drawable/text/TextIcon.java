@@ -6,6 +6,9 @@ import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widget.sizer.Box;
+import java.util.Objects;
+
+import lombok.Getter;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -14,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class TextIcon implements IIcon {
 
-    private final String text;
+    @Getter private final String text;
     private final int width, height;
     private final float scale;
     private final Alignment alignment;
@@ -57,7 +60,21 @@ public class TextIcon implements IIcon {
         return margin;
     }
 
-    public String getText() {
-        return this.text;
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof TextIcon textIcon)) return false;
+        return width == textIcon.width && height == textIcon.height && Float.compare(scale, textIcon.scale) == 0 &&
+                Objects.equals(text, textIcon.text) && Objects.equals(alignment, textIcon.alignment);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(text);
+        result = 31 * result + width;
+        result = 31 * result + height;
+        result = 31 * result + Float.hashCode(scale);
+        result = 31 * result + Objects.hashCode(alignment);
+        return result;
     }
 }

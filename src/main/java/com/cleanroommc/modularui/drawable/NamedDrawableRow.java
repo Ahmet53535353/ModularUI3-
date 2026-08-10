@@ -6,6 +6,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
+import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -74,5 +75,19 @@ public class NamedDrawableRow implements IDrawable {
     public NamedDrawableRow drawable(@Nullable IIcon icon) {
         this.drawable = icon;
         return this;
+    }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof NamedDrawableRow that)) return false;
+        return Objects.equals(name, that.name) && Objects.equals(drawable, that.drawable);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(name);
+        result = 31 * result + Objects.hashCode(drawable);
+        return result;
     }
 }

@@ -7,6 +7,9 @@ import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.GameObjectHelper;
 import com.cleanroommc.modularui.utils.JsonHelper;
 import com.cleanroommc.modularui.widget.Widget;
+import java.util.Objects;
+
+import lombok.Getter;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
@@ -25,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
 
+@Getter
 public class ItemDrawable implements IDrawable, IJsonSerializable {
 
     private ItemStack item = ItemStack.EMPTY;
@@ -61,10 +65,6 @@ public class ItemDrawable implements IDrawable, IJsonSerializable {
 
     public ItemDrawable(@NotNull Block item, int meta, int amount) {
         setItem(new ItemStack(item, amount, meta));
-    }
-
-    public ItemStack getItem() {
-        return item;
     }
 
     @SideOnly(Side.CLIENT)
@@ -158,6 +158,7 @@ public class ItemDrawable implements IDrawable, IJsonSerializable {
         return new ItemDrawable(item);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     public boolean saveToJson(JsonObject json) {
         if (this.item == null || this.item.isEmpty()) {
@@ -171,5 +172,21 @@ public class ItemDrawable implements IDrawable, IJsonSerializable {
             json.addProperty("nbt", this.item.getTagCompound().toString());
         }
         return true;
+    }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof ItemDrawable that)) return false;
+        if (item.isEmpty() && that.item.isEmpty()) return true;
+        if (item.isEmpty() || that.item.isEmpty()) return false;
+        return item.getItem() == that.item.getItem() && item.getItemDamage() == that.item.getItemDamage() &&
+                Objects.equals(item.getTagCompound(), that.item.getTagCompound());
+    }
+
+    @Override
+    public int hashCode() {
+        if (item.isEmpty()) return 0;
+        return Objects.hash(item.getItem(), item.getItemDamage(), item.getTagCompound());
     }
 }

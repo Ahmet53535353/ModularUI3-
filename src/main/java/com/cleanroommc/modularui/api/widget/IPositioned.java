@@ -397,7 +397,7 @@ public interface IPositioned<W extends IPositioned<W>> {
     }
 
     default W posRel(Alignment alignment) {
-        leftRel(alignment.x).topRel(alignment.y);
+        leftRel(alignment.x()).topRel(alignment.y());
         return getThis();
     }
 
@@ -471,7 +471,7 @@ public interface IPositioned<W extends IPositioned<W>> {
     @ApiStatus.ScheduledForRemoval(inVersion = "3.3.0")
     @Deprecated
     default W alignX(Alignment alignment) {
-        return alignX(alignment.x);
+        return alignX(alignment.x());
     }
 
     @ApiStatus.ScheduledForRemoval(inVersion = "3.3.0")
@@ -484,7 +484,7 @@ public interface IPositioned<W extends IPositioned<W>> {
     @ApiStatus.ScheduledForRemoval(inVersion = "3.3.0")
     @Deprecated
     default W alignY(Alignment alignment) {
-        return alignY(alignment.y);
+        return alignY(alignment.y());
     }
 
     @ApiStatus.ScheduledForRemoval(inVersion = "3.3.0")

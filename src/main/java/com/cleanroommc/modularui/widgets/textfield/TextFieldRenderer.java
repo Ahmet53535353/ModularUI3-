@@ -4,21 +4,37 @@ import com.cleanroommc.modularui.drawable.text.TextRenderer;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.Platform;
 
+import lombok.Setter;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TextFieldRenderer extends TextRenderer {
 
+    private static final DecimalFormat INTEGER_FIELD_FORMAT = new DecimalFormat("#");
+    private static final char groupingSeparator = INTEGER_FIELD_FORMAT.getDecimalFormatSymbols().getGroupingSeparator();
+
+    static {
+        INTEGER_FIELD_FORMAT.setGroupingUsed(true);
+        INTEGER_FIELD_FORMAT.setGroupingSize(3);
+    }
+
     protected final TextFieldHandler handler;
-    protected int markedColor = 0xFF2F72A8;
-    protected int cursorColor = 0xFFFFFFFF;
+    @Setter protected int markedColor = 0xFF2F72A8;
+    @Setter protected int cursorColor = 0xFFFFFFFF;
     protected boolean renderCursor = false;
+    private boolean formatAsInteger = false;
 
     public TextFieldRenderer(TextFieldHandler handler) {
         this.handler = handler;
@@ -32,14 +48,29 @@ public class TextFieldRenderer extends TextRenderer {
         this.renderCursor = active;
     }
 
-    public void setMarkedColor(int markedColor) {
-        this.markedColor = markedColor;
+    @ApiStatus.Experimental
+    public void setFormatAsInteger(boolean formatAsInteger) {
+        this.formatAsInteger = formatAsInteger;
     }
 
-    public void setCursorColor(int cursorColor) {
-        this.cursorColor = cursorColor;
+    @Override
+    public void draw(List<String> lines) {
+        if (formatAsInteger) lines = decorateLines(lines);
+        super.draw(lines);
     }
 
+    private static @NotNull List<String> decorateLines(List<String> lines) {
+        return lines.stream().map(TextFieldRenderer::tryFormatString)
+                .collect(Collectors.toList());
+    }
+
+    private static @NotNull String tryFormatString(String str) {
+        try {
+            return INTEGER_FIELD_FORMAT.format(Long.parseLong(str));
+        } catch (NumberFormatException e) {
+            return str;
+        }
+    }
     @Override
     protected void drawMeasuredLines(List<Line> measuredLines) {
         drawMarked(measuredLines);
@@ -72,19 +103,19 @@ public class TextFieldRenderer extends TextRenderer {
                 int min = this.handler.getStartCursor().y;
                 int max = this.handler.getEndCursor().y;
                 Line line = measuredLines.get(min);
-                int startX = getStartX(line.getWidth());
-                drawMarked(start.y, start.x, startX + line.getWidth());
+                int startX = getStartX(line.width());
+                drawMarked(start.y, start.x, startX + line.width());
                 start.y += getFontHeight();
                 if (max - min > 1) {
                     for (int i = min + 1; i < max; i++) {
                         line = measuredLines.get(i);
-                        startX = getStartX(line.getWidth());
-                        drawMarked(start.y, startX, startX + line.getWidth());
+                        startX = getStartX(line.width());
+                        drawMarked(start.y, startX, startX + line.width());
                         start.y += getFontHeight();
                     }
                 }
                 line = measuredLines.get(max);
-                startX = getStartX(line.getWidth());
+                startX = getStartX(line.width());
                 drawMarked(start.y, startX, end.x);
             }
         }
@@ -99,14 +130,14 @@ public class TextFieldRenderer extends TextRenderer {
         int index = (int) (y / (getFontHeight()));
         if (index < 0) return new Point();
         if (index >= measuredLines.size())
-            return new Point(measuredLines.get(measuredLines.size() - 1).getText().length(), measuredLines.size() - 1);
+            return new Point(measuredLines.getLast().text().length(), measuredLines.size() - 1);
         Line line = measuredLines.get(index);
-        x -= getStartX(line.getWidth());
-        if (line.getWidth() <= 0) return new Point(0, index);
-        if (line.getWidth() < x) return new Point(line.getText().length(), index);
+        x -= getStartX(line.width());
+        if (line.width() <= 0) return new Point(0, index);
+        if (line.width() < x) return new Point(line.text().length(), index);
         float currentX = 0;
-        for (int i = 0; i < line.getText().length(); i++) {
-            char c = line.getText().charAt(i);
+        for (int i = 0; i < line.text().length(); i++) {
+            char c = line.text().charAt(i);
             float charWidth = getFontRenderer().getCharWidth(c) * this.scale;
             currentX += charWidth;
             if (currentX >= x) {
@@ -123,8 +154,8 @@ public class TextFieldRenderer extends TextRenderer {
             return new Point2D.Float(getStartX(0), getStartYOfLines(1));
         }
         Line line = measuredLines.get(cursorPos.y);
-        String sub = line.getText().substring(0, Math.min(line.getText().length(), cursorPos.x));
-        return new Point2D.Float(getStartX(line.getWidth()) + getFontRenderer().getStringWidth(sub) * this.scale, getStartYOfLines(measuredLines.size()) + cursorPos.y * getFontHeight());
+        String sub = line.text().substring(0, Math.min(line.text().length(), cursorPos.x));
+        return new Point2D.Float(getStartX(line.width()) + getFontRenderer().getStringWidth(sub) * this.scale, getStartYOfLines(measuredLines.size()) + cursorPos.y * getFontHeight());
     }
 
     @SideOnly(Side.CLIENT)

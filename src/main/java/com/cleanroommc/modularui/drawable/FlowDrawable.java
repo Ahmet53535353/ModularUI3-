@@ -8,6 +8,10 @@ import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widget.sizer.Box;
 
+import lombok.Getter;
+import lombok.val;
+import org.jetbrains.annotations.Range;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,8 +31,8 @@ public class FlowDrawable implements IDrawable {
         return new FlowDrawable(GuiAxis.Y);
     }
 
-    private final GuiAxis axis;
-    private final List<IIcon> icons = new ArrayList<>();
+    @Getter private final GuiAxis axis;
+    @Getter private final List<IIcon> icons = new ArrayList<>();
     private Alignment.MainAxis maa = Alignment.MainAxis.START;
     private Alignment.CrossAxis caa = Alignment.CrossAxis.CENTER;
 
@@ -40,7 +44,7 @@ public class FlowDrawable implements IDrawable {
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
         if (this.icons.isEmpty()) return;
         if (this.icons.size() == 1) {
-            this.icons.get(0).draw(context, x, y, width, height, widgetTheme);
+            this.icons.getFirst().draw(context, x, y, width, height, widgetTheme);
             return;
         }
 
@@ -48,12 +52,11 @@ public class FlowDrawable implements IDrawable {
         int size = this.axis.isHorizontal() ? width : height;
         int crossSize = this.axis.isHorizontal() ? height : width;
         int pos = this.axis.isHorizontal() ? x : y;
-        int amount = this.icons.size();
+        @Range(from = 2, to = Integer.MAX_VALUE) int amount = this.icons.size();
         int childrenSize = 0;
         int expandedAmount = 0;
-        int space = 0; // child margin
 
-        for (IIcon icon : this.icons) {
+        for (val icon : this.icons) {
             int s = icon.getSize(this.axis);
             if (s <= 0) {
                 expandedAmount++;
@@ -62,24 +65,32 @@ public class FlowDrawable implements IDrawable {
             }
         }
         Alignment.MainAxis maa = this.maa;
+        int space = 0;
+        int startOffset = 0;
+        final int spaceCount = Math.max(amount - 1, 0);
         if (maa == Alignment.MainAxis.SPACE_BETWEEN || maa == Alignment.MainAxis.SPACE_AROUND) {
             if (expandedAmount > 0) {
                 maa = Alignment.MainAxis.START;
             } else {
-                space = 0;
+                int free = size - childrenSize;
+                if (maa == Alignment.MainAxis.SPACE_BETWEEN) {
+                    space = free / spaceCount;
+                } else { // SPACE_AROUND
+                    int unit = free / (2 * amount); // one edge gap
+                    startOffset = unit;
+                    space = 2 * unit;
+                }
             }
         }
-        final int spaceCount = Math.max(amount - 1, 0);
-        childrenSize += spaceCount * space;
 
-        int lastP = pos;
+        int lastP = pos + startOffset;
         if (maa == Alignment.MainAxis.CENTER) {
             lastP += (int) (size / 2f - childrenSize / 2f);
         } else if (maa == Alignment.MainAxis.END) {
             lastP += size - childrenSize;
         }
 
-        int expanderSize = (size - childrenSize) / expandedAmount;
+        int expanderSize = expandedAmount > 0 ? (size - childrenSize) / expandedAmount : 0;
         int is, ics, ip, icp; // s = size, p = pos, c = cross
         for (IIcon icon : this.icons) {
             Box margin = icon.getMargin();
@@ -111,11 +122,7 @@ public class FlowDrawable implements IDrawable {
             } else {
                 icon.draw(context, icp, ip, ics, is, widgetTheme);
             }
-            lastP += is;
-
-            if (maa == Alignment.MainAxis.SPACE_BETWEEN) {
-                lastP += (size - childrenSize) / spaceCount;
-            }
+            lastP += is + space;
         }
     }
 
@@ -150,14 +157,6 @@ public class FlowDrawable implements IDrawable {
             s = Math.max(s, is + icon.getMargin().getTotal(axis));
         }
         return s;
-    }
-
-    public GuiAxis getAxis() {
-        return axis;
-    }
-
-    public List<IIcon> getIcons() {
-        return icons;
     }
 
     public FlowDrawable mainAxisAlignment(Alignment.MainAxis maa) {
@@ -202,5 +201,22 @@ public class FlowDrawable implements IDrawable {
     public FlowDrawable removeAll() {
         this.icons.clear();
         return this;
+    }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof FlowDrawable that)) return false;
+        return axis == that.axis && icons.equals(that.icons) &&
+                maa == that.maa && caa == that.caa;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = axis.hashCode();
+        result = 31 * result + icons.hashCode();
+        result = 31 * result + maa.hashCode();
+        result = 31 * result + caa.hashCode();
+        return result;
     }
 }

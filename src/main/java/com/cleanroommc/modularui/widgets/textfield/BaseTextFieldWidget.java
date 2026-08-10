@@ -15,6 +15,8 @@ import com.cleanroommc.modularui.widget.scroll.HorizontalScrollData;
 import com.cleanroommc.modularui.widget.scroll.ScrollData;
 import com.cleanroommc.modularui.widgets.VoidWidget;
 
+import lombok.Getter;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -48,18 +50,18 @@ public class BaseTextFieldWidget<W extends BaseTextFieldWidget<W>> extends Abstr
 
     protected TextFieldHandler handler = new TextFieldHandler(this);
     protected TextFieldRenderer renderer = new TextFieldRenderer(this.handler);
-    protected Alignment textAlignment = Alignment.CenterLeft;
-    protected List<String> lastText;
-    protected int scrollOffset = 0;
-    protected float scale = 1f;
-    protected boolean focusOnGuiOpen;
+    @Getter protected Alignment textAlignment = Alignment.CenterLeft;
+    @Getter protected List<String> lastText;
+    @Getter protected int scrollOffset = 0;
+    @Getter protected float scale = 1f;
+    @Getter protected boolean focusOnGuiOpen;
     private int cursorTimer;
     protected long lastClickTime = 0;
 
-    protected Integer textColor;
-    protected Integer markedColor;
-    protected String hintText = null;
-    protected Integer hintTextColor;
+    @Getter protected Integer textColor;
+    @Getter protected Integer markedColor;
+    @Getter protected String hintText = null;
+    @Getter protected Integer hintTextColor;
 
     public BaseTextFieldWidget() {
         super(new HorizontalScrollData(false, 4), null);
@@ -218,43 +220,54 @@ public class BaseTextFieldWidget<W extends BaseTextFieldWidget<W>> extends Abstr
             return Result.IGNORE;
         }
         switch (keyCode) {
-            case Keyboard.KEY_NUMPADENTER:
-            case Keyboard.KEY_RETURN:
+            case Keyboard.KEY_NUMPADENTER, Keyboard.KEY_RETURN -> {
                 if (getMaxLines() > 1) {
                     this.handler.newLine();
                 } else {
                     getContext().removeFocus();
                 }
                 return Result.SUCCESS;
-            case Keyboard.KEY_ESCAPE:
+            }
+            case Keyboard.KEY_ESCAPE -> {
                 if (ModularUIConfig.escRestoreLastText) {
                     this.handler.clear();
                     this.handler.insert(this.lastText, canScrollHorizontally());
                 }
                 getContext().removeFocus();
                 return Result.SUCCESS;
-            case Keyboard.KEY_LEFT: {
+            }
+            case Keyboard.KEY_LEFT -> {
                 this.handler.moveCursorLeft(Interactable.hasControlDown(), Interactable.hasShiftDown());
                 return Result.SUCCESS;
             }
-            case Keyboard.KEY_RIGHT: {
+            case Keyboard.KEY_RIGHT -> {
                 this.handler.moveCursorRight(Interactable.hasControlDown(), Interactable.hasShiftDown());
                 return Result.SUCCESS;
             }
-            case Keyboard.KEY_UP: {
+            case Keyboard.KEY_UP -> {
                 this.handler.moveCursorUp(Interactable.hasControlDown(), Interactable.hasShiftDown());
                 return Result.SUCCESS;
             }
-            case Keyboard.KEY_DOWN: {
+            case Keyboard.KEY_DOWN -> {
                 this.handler.moveCursorDown(Interactable.hasControlDown(), Interactable.hasShiftDown());
                 return Result.SUCCESS;
             }
-            case Keyboard.KEY_DELETE:
-                this.handler.delete(true);
+            case Keyboard.KEY_HOME -> {
+                this.handler.moveCursorStart(Interactable.hasControlDown(), Interactable.hasShiftDown());
                 return Result.SUCCESS;
-            case Keyboard.KEY_BACK:
-                this.handler.delete();
+            }
+            case Keyboard.KEY_END -> {
+                this.handler.moveCursorEnd(Interactable.hasControlDown(), Interactable.hasShiftDown());
                 return Result.SUCCESS;
+            }
+            case Keyboard.KEY_DELETE -> {
+                this.handler.delete(true, Interactable.hasControlDown(), Interactable.hasShiftDown());
+                return Result.SUCCESS;
+            }
+            case Keyboard.KEY_BACK -> {
+                this.handler.delete(Interactable.hasControlDown(), Interactable.hasShiftDown());
+                return Result.SUCCESS;
+            }
         }
 
         if (character == Character.MIN_VALUE) {
@@ -266,25 +279,21 @@ public class BaseTextFieldWidget<W extends BaseTextFieldWidget<W>> extends Abstr
             GuiScreen.setClipboardString(this.handler.getSelectedText());
             return Result.SUCCESS;
         } else if (GuiScreen.isKeyComboCtrlV(keyCode)) {
-            if (this.handler.hasTextMarked()) {
-                this.handler.delete();
-            }
+            this.handler.deleteMarked();
             // paste copied text in marked text
             this.handler.insert(GuiScreen.getClipboardString().replace("§", ""), canScrollHorizontally());
             return Result.SUCCESS;
         } else if (GuiScreen.isKeyComboCtrlX(keyCode) && this.handler.hasTextMarked()) {
             // copy and delete copied text
             GuiScreen.setClipboardString(this.handler.getSelectedText());
-            this.handler.delete();
+            this.handler.deleteMarked();
             return Result.SUCCESS;
         } else if (GuiScreen.isKeyComboCtrlA(keyCode)) {
             // mark whole text
             this.handler.markAll();
             return Result.SUCCESS;
         } else if (BASE_PATTERN.matcher(String.valueOf(character)).matches() && handler.test(String.valueOf(character))) {
-            if (this.handler.hasTextMarked()) {
-                this.handler.delete();
-            }
+            this.handler.deleteMarked();
             // insert typed char
             this.handler.insert(String.valueOf(character), canScrollHorizontally());
             return Result.SUCCESS;
@@ -304,10 +313,6 @@ public class BaseTextFieldWidget<W extends BaseTextFieldWidget<W>> extends Abstr
 
     public ScrollData getScrollData() {
         return getScrollArea().getScrollX();
-    }
-
-    public List<String> getLastText() {
-        return lastText;
     }
 
     public W setTextAlignment(Alignment textAlignment) {
@@ -377,35 +382,4 @@ public class BaseTextFieldWidget<W extends BaseTextFieldWidget<W>> extends Abstr
         return format.getDecimalFormatSymbols().getGroupingSeparator();
     }
 
-    public Alignment getTextAlignment() {
-        return textAlignment;
-    }
-
-    public int getScrollOffset() {
-        return scrollOffset;
-    }
-
-    public float getScale() {
-        return scale;
-    }
-
-    public boolean isFocusOnGuiOpen() {
-        return focusOnGuiOpen;
-    }
-
-    public Integer getTextColor() {
-        return textColor;
-    }
-
-    public Integer getMarkedColor() {
-        return markedColor;
-    }
-
-    public String getHintText() {
-        return hintText;
-    }
-
-    public Integer getHintTextColor() {
-        return hintTextColor;
-    }
 }

@@ -6,6 +6,7 @@ import com.cleanroommc.modularui.api.layout.IViewportStack;
 import com.cleanroommc.modularui.utils.Interpolations;
 import com.cleanroommc.modularui.utils.MathUtils;
 
+import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.awt.*;
@@ -36,8 +37,8 @@ public class Area extends Rectangle implements IAnimatable<Area> {
      * the widget layer within this panel
      */
     private int z;
-    private final Box margin = new Box();
-    private final Box padding = new Box();
+    @Getter private final Box margin = new Box();
+    @Getter private final Box padding = new Box();
 
     public Area() {}
 
@@ -424,6 +425,14 @@ public class Area extends Rectangle implements IAnimatable<Area> {
     }
 
     /**
+     * Sets this area to a sub area of its current bounds in UV coordinates (0-1).
+     */
+    public void subArea(float u0, float v0, float u1, float v1) {
+        set((int) (this.x + u0 * this.width), (int) (this.y + v0 * this.height),
+                (int) ((u1 - u0) * this.width), (int) ((v1 - v0) * this.height));
+    }
+
+    /**
      * Set the position
      */
     public void setPos(int x, int y) {
@@ -489,14 +498,6 @@ public class Area extends Rectangle implements IAnimatable<Area> {
         int y0 = MathUtils.min(yTL, yTR, yBL, yBR);
         int y1 = MathUtils.max(yTL, yTR, yBL, yBR);
         setPos(x0, y0, x1, y1);
-    }
-
-    public Box getMargin() {
-        return this.margin;
-    }
-
-    public Box getPadding() {
-        return this.padding;
     }
 
     /**

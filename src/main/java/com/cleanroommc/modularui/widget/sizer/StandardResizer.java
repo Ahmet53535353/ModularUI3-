@@ -721,14 +721,14 @@ public class StandardResizer extends WidgetResizeNode implements IPositioned<Sta
     @Deprecated
     public StandardResizer anchor(Alignment alignment) {
         if (this.x.hasStart() || !this.x.hasEnd()) {
-            anchorLeft(alignment.x);
+            anchorLeft(alignment.x());
         } else if (this.x.hasEnd()) {
-            anchorRight(alignment.x);
+            anchorRight(alignment.x());
         }
         if (this.y.hasStart() || !this.y.hasEnd()) {
-            anchorTop(alignment.y);
+            anchorTop(alignment.y());
         } else if (this.y.hasEnd()) {
-            anchorBottom(alignment.y);
+            anchorBottom(alignment.y());
         }
         return this;
     }

@@ -17,6 +17,8 @@ import com.cleanroommc.modularui.utils.MathUtils;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.widget.sizer.Area;
 
+import lombok.Getter;
+
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -43,8 +45,8 @@ public class RichTooltip implements IRichTextBuilder<RichTooltip> {
     private Consumer<Area> parent;
     private Pos pos = null;
     private Consumer<RichTooltip> tooltipBuilder;
-    private int showUpTimer = 0;
-    private boolean autoUpdate = false;
+    @Getter private int showUpTimer = 0;
+    @Getter private boolean autoUpdate = false;
     private int titleMargin = 0;
     private boolean appliedMargin = true;
 
@@ -304,14 +306,6 @@ public class RichTooltip implements IRichTextBuilder<RichTooltip> {
         this.dirty = true;
     }
 
-    public int getShowUpTimer() {
-        return this.showUpTimer;
-    }
-
-    public boolean isAutoUpdate() {
-        return this.autoUpdate;
-    }
-
     public RichTooltip pos(Pos pos) {
         this.pos = pos;
         return this;
@@ -361,7 +355,7 @@ public class RichTooltip implements IRichTextBuilder<RichTooltip> {
     public RichTooltip addFromItem(ItemStack item) {
         if (!NetworkUtils.isClient()) return this;
         List<String> lines = MCHelper.getItemToolTip(item);
-        add(lines.get(0)).newLine();
+        add(lines.getFirst()).newLine();
         if (lines.size() > 1) {
             spaceLine();
             for (int i = 1, n = lines.size(); i < n; i++) {
@@ -415,7 +409,7 @@ public class RichTooltip implements IRichTextBuilder<RichTooltip> {
         RichTooltip tooltip = new RichTooltip();
         tooltip.parent(area -> RichTooltip.findIngredientArea(area, x, y));
         // Other positions don't really work due to the lack of GuiContext in non-modular uis
-        tooltip.add(lines.get(0)).newLine();
+        tooltip.add(lines.getFirst()).newLine();
         if (lines.size() > 1) {
             if (!stack.isEmpty()) {
                 tooltip.spaceLine();
