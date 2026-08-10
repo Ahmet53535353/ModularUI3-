@@ -124,21 +124,16 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
 
     @NotNull
     public String getText() {
-        if (this.handler.getText().isEmpty()) {
-            return "";
-        }
         if (this.handler.getText().size() > 1) {
             throw new IllegalStateException("TextFieldWidget can only have one line!");
         }
         return this.handler.getText().getFirst();
     }
 
-    public void setText(@NotNull String text) {
-        if (this.handler.getText().isEmpty()) {
-            this.handler.getText().add(text);
-        } else {
-            this.handler.getText().set(0, text);
-        }
+    @Override
+    public TextFieldWidget setText(String text) {
+        this.handler.setText(text);
+        return this;
     }
 
     @Override

@@ -75,14 +75,21 @@ public class TextFieldRenderer extends TextRenderer {
     protected void drawMeasuredLines(List<Line> measuredLines) {
         drawMarked(measuredLines);
         super.drawMeasuredLines(measuredLines);
-        // draw cursor
+
+        if (measuredLines.isEmpty() || this.handler.getText().isEmpty()) return;
+
         if (this.renderCursor) {
             Point main = this.handler.getMainCursor();
-            Point2D.Float start = getPosOf(measuredLines, main);
-            if (this.handler.getText().get(main.y).isEmpty()) {
-                start.x += 0.7f;
+
+            if (main.y >= 0 && main.y < this.handler.getText().size()) {
+                Point2D.Float start = getPosOf(measuredLines, main);
+                if (start != null) {
+                    if (this.handler.getText().get(main.y).isEmpty()) {
+                        start.x += 0.7f;
+                    }
+                    drawCursor(start.x, start.y);
+                }
             }
-            drawCursor(start.x, start.y);
         }
     }
 
@@ -92,7 +99,18 @@ public class TextFieldRenderer extends TextRenderer {
     }
 
     protected void drawMarked(List<Line> measuredLines) {
-        if (!this.simulate && this.handler.hasTextMarked()) {
+        if (measuredLines.isEmpty() || !this.handler.hasTextMarked()) {
+            return;
+        }
+
+        int min = this.handler.getStartCursor().y;
+        int max = this.handler.getEndCursor().y;
+
+        if (min < 0 || max >= measuredLines.size()) {
+            return;
+        }
+
+        if (!this.simulate) {
             Point2D.Float start = getPosOf(measuredLines, this.handler.getStartCursor());
             // render Marked
             Point2D.Float end = getPosOf(measuredLines, this.handler.getEndCursor());
@@ -100,8 +118,6 @@ public class TextFieldRenderer extends TextRenderer {
             if (start.y == end.y) {
                 drawMarked(start.y, start.x, end.x);
             } else {
-                int min = this.handler.getStartCursor().y;
-                int max = this.handler.getEndCursor().y;
                 Line line = measuredLines.get(min);
                 int startX = getStartX(line.width());
                 drawMarked(start.y, start.x, startX + line.width());
@@ -150,7 +166,7 @@ public class TextFieldRenderer extends TextRenderer {
     }
 
     public Point2D.Float getPosOf(List<Line> measuredLines, Point cursorPos) {
-        if (measuredLines.isEmpty()) {
+        if (measuredLines.isEmpty() || cursorPos.y < 0 || cursorPos.y >= measuredLines.size()) {
             return new Point2D.Float(getStartX(0), getStartYOfLines(1));
         }
         Line line = measuredLines.get(cursorPos.y);
