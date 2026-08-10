@@ -331,14 +331,77 @@ public class ModularContainer extends Container {
             detectAndSendChanges();
             return returnable;
         } else if (clickTypeIn == ClickType.SWAP && mouseButton >= 0 && mouseButton < 9) {
-            // minecraft does not check if the hotbar slot can actually take and put items
-            Slot hotbarSlot = findPlayerSlot(player, mouseButton); // mouseButton is the slot index here
-            if (hotbarSlot != null) {
+            Slot hotbarSlot = findPlayerSlot(player, mouseButton);
+
+            if (hotbarSlot != null && slotId >= 0) {
                 Slot fromSlot = getSlot(slotId);
-                ItemStack fromItem = fromSlot.getStack();
+                ItemStack fromStack = fromSlot.getStack();
                 ItemStack hotbarStack = hotbarSlot.getStack();
-                if (!fromItem.isEmpty() && !hotbarSlot.isItemValid(fromItem)) return ItemStack.EMPTY;
-                if (!hotbarStack.isEmpty() && !hotbarSlot.canTakeStack(player)) return ItemStack.EMPTY;
+
+                if (!fromStack.isEmpty() && !hotbarSlot.isItemValid(fromStack)) return Platform.EMPTY_STACK;
+                if (!hotbarStack.isEmpty() && !fromSlot.isItemValid(hotbarStack)) return Platform.EMPTY_STACK;
+                if (!fromStack.isEmpty() && !fromSlot.canTakeStack(player)) return Platform.EMPTY_STACK;
+                if (!hotbarStack.isEmpty() && !hotbarSlot.canTakeStack(player)) return Platform.EMPTY_STACK;
+
+                if (!fromStack.isEmpty() && !hotbarStack.isEmpty() &&
+                        fromStack.getItem() == hotbarStack.getItem() &&
+                        fromStack.getMetadata() == hotbarStack.getMetadata() &&
+                        ItemStack.areItemStackTagsEqual(fromStack, hotbarStack)) {
+
+                    int hotbarLimit = hotbarSlot.getItemStackLimit(fromStack);
+                    if (hotbarStack.getCount() < hotbarLimit) {
+                        int toMove = Math.min(fromStack.getCount(), hotbarLimit - hotbarStack.getCount());
+                        hotbarStack.grow(toMove);
+                        fromSlot.decrStackSize(toMove);
+
+                        hotbarSlot.onSlotChanged();
+                        fromSlot.onSlotChanged();
+                    }
+                } else {
+                    boolean canFitInHotbar = fromStack.isEmpty() || fromStack.getCount() <= hotbarSlot.getItemStackLimit(fromStack);
+                    boolean canFitInFromSlot = hotbarStack.isEmpty() || hotbarStack.getCount() <= fromSlot.getItemStackLimit(hotbarStack);
+
+                    if (canFitInHotbar && canFitInFromSlot) {
+                        fromSlot.putStack(hotbarStack);
+                        hotbarSlot.putStack(fromStack);
+                        fromSlot.onTake(player, fromStack);
+                        fromSlot.onSlotChanged();
+                        hotbarSlot.onSlotChanged();
+                    } else {
+                        if (hotbarStack.isEmpty() && !fromStack.isEmpty()) {
+                            int moveAmt = hotbarSlot.getItemStackLimit(fromStack);
+                            hotbarSlot.putStack(fromSlot.decrStackSize(moveAmt));
+                            fromSlot.onSlotChanged();
+                            hotbarSlot.onSlotChanged();
+                        } else if (fromStack.isEmpty() && !hotbarStack.isEmpty()) {
+                            int moveAmt = fromSlot.getItemStackLimit(hotbarStack);
+                            fromSlot.putStack(hotbarSlot.decrStackSize(moveAmt));
+                            fromSlot.onSlotChanged();
+                            hotbarSlot.onSlotChanged();
+                        }
+                    }
+                }
+                return Platform.EMPTY_STACK;
+            }
+        } else if (clickTypeIn == ClickType.THROW && inventoryplayer.getItemStack().isEmpty() && slotId >= 0) {
+            Slot slot = getSlot(slotId);
+
+            if (slot.getHasStack() && slot.canTakeStack(player)) {
+                ItemStack stackInSlot = slot.getStack();
+                int amountToDrop = 1;
+                // mouseButton 1 is CTRL+Q
+                if (mouseButton == 1) {
+                    amountToDrop = Math.min(stackInSlot.getCount(), stackInSlot.getMaxStackSize());
+                }
+
+                if (amountToDrop > 0) {
+                    ItemStack droppedStack = slot.decrStackSize(amountToDrop);
+                    player.dropItem(droppedStack, true);
+
+                    slot.onSlotChanged();
+                    detectAndSendChanges();
+                }
+                return Platform.EMPTY_STACK;
             }
         }
 
