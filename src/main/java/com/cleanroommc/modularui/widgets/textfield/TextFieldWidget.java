@@ -206,6 +206,20 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
     }
 
     public TextFieldWidget numbersDouble(DAM.UnaryDoubleOperator validator) {
+        return numbersDouble((input, num) -> validator.apply(num));
+    }
+
+    /**
+     * Like {@link #numbersDouble(DAM.UnaryDoubleOperator)}, but also exposes the raw source expression, which lets a
+     * validator distinguish an explicit percentage from a plain fractional value.
+     */
+    @FunctionalInterface
+    public interface NumberValidator {
+
+        double apply(String input, double value);
+    }
+
+    public TextFieldWidget numbersDouble(NumberValidator validator) {
         this.numbers = true;
         return setValidator(val -> {
             double num;
@@ -214,7 +228,7 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
             } else {
                 num = parse(val);
             }
-            return format.format(validator.apply(num));
+            return format.format(validator.apply(val, num));
         });
     }
 
@@ -250,17 +264,18 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
      *
      * @param validator allow further validation of the number
      * @param min       optional lower limit
-     * @param max       optional upper limit, if this is specified, then values that evaluate to a noninteger are multiplied by the max
+     * @param max       optional upper limit, if this is specified, then explicit percentages and fractional values are
+     *                  multiplied by the max
      */
     public TextFieldWidget numbersLong(MathUtils.UnaryLongOperator validator, @Nullable LongSupplier min, @Nullable LongSupplier max) {
         formatAsInteger(true);
         defaultWholeNumberScrollValues();
         numberParser(MathUtils.PARSER_WHOLE_NUMBER);
-        return numbersDouble(d -> {
+        return numbersDouble((val, d) -> {
             long l;
             if (max != null) {
                 long maxValue = max.getAsLong();
-                l = MathUtils.percentOrSelf(d, maxValue);
+                l = MathUtils.percentOrSelf(val, d, maxValue);
                 l = Math.min(validator.apply(l), maxValue);
             } else {
                 l = validator.apply(Math.round(d));
