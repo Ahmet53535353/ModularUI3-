@@ -26,7 +26,7 @@ public class ModularUIConfig {
     public static boolean showSlotOverlay = true;
 
     @Config.Comment("If true, widget outlines and widget information will be drawn.")
-    public static boolean guiDebugMode = FMLLaunchHandler.isDeobfuscatedEnvironment();
+    public static boolean guiDebugMode = false;
 
     @Config.Comment("If true and not specified otherwise, screens will try to use the 'vanilla_dark' theme.")
     public static boolean useDarkThemeByDefault = false;
