@@ -39,6 +39,7 @@ public class GuiDraw {
 
     public static final double PI2 = Math.PI * 2;
     public static final double PI_2 = Math.PI / 2;
+    private static final int FLUID_TILE_SIZE = 16;
 
     public static void drawRect(float x0, float y0, float w, float h, int color) {
         Platform.setupDrawColor();
@@ -321,7 +322,10 @@ public class GuiDraw {
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluidStill.toString());
         int fluidColor = fluid.getColor(content);
         GlStateManager.color(Color.getRedF(fluidColor), Color.getGreenF(fluidColor), Color.getBlueF(fluidColor), Color.getAlphaF(fluidColor));
-        drawTiledTexture(TextureMap.LOCATION_BLOCKS_TEXTURE, x0, y0, width, height, sprite.getMinU(), sprite.getMinV(), sprite.getMaxU(), sprite.getMaxV(), sprite.getIconWidth(), sprite.getIconHeight(), z);
+        // Tile the icon every 16 gui pixels instead of using the sprite resolution. The sprite can be larger than 16x16
+        // because of hd resource packs or because of the atlas padding added for anisotropic filtering, in which case
+        // the sprite size does not describe how large one tile should be drawn and the icon would end up cropped.
+        drawTiledTexture(TextureMap.LOCATION_BLOCKS_TEXTURE, x0, y0, width, height, sprite.getMinU(), sprite.getMinV(), sprite.getMaxU(), sprite.getMaxV(), FLUID_TILE_SIZE, FLUID_TILE_SIZE, z);
         GlStateManager.color(1f, 1f, 1f, 1f);
     }
 
