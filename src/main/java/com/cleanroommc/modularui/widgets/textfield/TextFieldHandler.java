@@ -320,10 +320,16 @@ public class TextFieldHandler {
         if (insertion.isEmpty() || (insertion.size() > 1 && text.size() + insertion.size() - 1 > this.maxLines)) {
             return null;
         }
-        int x, y = this.cursor.y;
+        // the marked text has to be removed from the list we are inserting into, not from this.text,
+        // as this.text is only replaced once the insertion succeeded
+        Point cursor = new Point(this.cursor);
         if (hasTextMarked()) {
-            delete(false, false, false);
+            Point min = getStartCursor();
+            Point max = getEndCursor();
+            deleteMarked(text, min, max);
+            cursor.setLocation(min.x, min.y);
         }
+        int x, y = cursor.y;
         if (text.isEmpty()) {
             if (insertion.size() == 1 && !test(insertion.getFirst())) {
                 return null;
@@ -331,29 +337,47 @@ public class TextFieldHandler {
             text.addAll(insertion);
             return new Point(text.getLast().length(), text.size() - 1);
         }
-        String line = text.get(this.cursor.y);
-        int cursorX = Math.min(this.cursor.x, line.length());
+        String line = text.get(cursor.y);
+        int cursorX = Math.min(cursor.x, line.length());
         String lineStart = line.substring(0, cursorX);
         String lineEnd = line.substring(cursorX);
         if (insertion.size() == 1 && text.size() == 1 && !test(lineStart + insertion.getFirst() + lineEnd)) {
             return null;
         }
-        text.set(this.cursor.y, lineStart + insertion.getFirst());
+        text.set(cursor.y, lineStart + insertion.getFirst());
         if (insertion.size() == 1) {
             if (!test(insertion.getFirst())) {
                 return null;
             }
-            text.set(this.cursor.y, text.get(this.cursor.y) + lineEnd);
-            return new Point(cursorX + insertion.getFirst().length(), this.cursor.y);
+            text.set(cursor.y, text.get(cursor.y) + lineEnd);
+            return new Point(cursorX + insertion.getFirst().length(), cursor.y);
         } else {
-            text.add(this.cursor.y + 1, insertion.getLast() + lineEnd);
+            text.add(cursor.y + 1, insertion.getLast() + lineEnd);
             x = insertion.getLast().length();
             y += 1;
             if (insertion.size() > 2) {
-                text.addAll(this.cursor.y + 1, insertion.subList(1, insertion.size() - 1));
+                text.addAll(cursor.y + 1, insertion.subList(1, insertion.size() - 1));
                 y += insertion.size() - 2;
             }
             return new Point(x, y);
+        }
+    }
+
+    /**
+     * Removes the text between {@code min} and {@code max} from the given list of lines, and moves
+     * {@code min} onto the start of the removed range.
+     */
+    private static void deleteMarked(List<String> text, Point min, Point max) {
+        if (min.y < 0 || max.y >= text.size()) return;
+        min.y = MathUtils.clamp(min.y, 0, text.size() - 1);
+        max.y = MathUtils.clamp(max.y, 0, text.size() - 1);
+        String minLine = text.get(min.y);
+        min.x = MathUtils.clamp(min.x, 0, minLine.length());
+        String maxLine = text.get(max.y);
+        max.x = MathUtils.clamp(max.x, 0, maxLine.length());
+        text.set(min.y, minLine.substring(0, min.x) + maxLine.substring(max.x));
+        if (max.y > min.y) {
+            text.subList(min.y + 1, max.y + 1).clear();
         }
     }
 
